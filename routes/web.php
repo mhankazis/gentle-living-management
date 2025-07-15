@@ -16,12 +16,18 @@ Route::view('/cart', 'cart')->name('cart');
 Route::get('/products', function () {
     return view('products');
 });
+Route::get('/products/{id}', function ($id) {
+    return view('product-detail');
+})->name('product.detail');
 Route::get('/categories', function () {
     return view('categories');
 });
 Route::get('/about', function () {
     return view('about');
 });
+Route::get('/checkout', function () {
+    return view('checkout');
+})->name('checkout');
 
 // LOGIN GET
 Route::get('/login', function () {
