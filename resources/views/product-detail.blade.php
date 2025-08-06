@@ -212,6 +212,7 @@
         <h1 class="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
         <a href="/products" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">Back to Products</a>
     </div>
+    @include('components.features')
     @include('components.footer')
 </div>
 @endsection

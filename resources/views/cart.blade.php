@@ -22,6 +22,7 @@
         </div>
     </div>
     <div class="mt-auto">
+        @include('components.features')
         @include('components.footer')
     </div>
 </div>

@@ -144,6 +144,7 @@
             <button class="px-8 py-3 rounded-lg text-blue-600 font-semibold bg-white hover:bg-gray-100 transition text-lg">Start Shopping Now</button>
         </div>
     </section>
+    @include('components.features')
     @include('components.footer')
 </div>
 @endsection

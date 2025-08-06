@@ -85,6 +85,7 @@ $categories = [
             @endforeach
         </div>
     </div>
+    @include('components.features')
     @include('components.footer')
 </div>
 @endsection
