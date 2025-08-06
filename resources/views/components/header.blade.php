@@ -8,16 +8,16 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
             <a href="/" class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"></div>
-                <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Gentle Living
-                </span>
+                <img src="{{ asset('images/logo-gentle-living.png') }}" alt="Gentle Living" class="h-10 w-auto max-w-[150px]">
+                <div class="text-xl font-bold text-gray-800 hidden">
+                    <span class="text-emerald-600">Gentle</span> <span class="text-blue-600">Living</span>
+                </div>
             </a>
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Home</a>
-                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Products</a>
-                <a href="/categories" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Categories</a>
-                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">About</a>
+                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Beranda</a>
+                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Produk</a>
+                <a href="/categories" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Riwayat</a>
+                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Tentang</a>
             </nav>
             <div class="flex items-center space-x-4">
                 <div class="hidden md:flex items-center space-x-2">
