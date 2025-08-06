@@ -1,46 +1,46 @@
 <!-- Categories Section ala Shop by Category -->
 @php
 $categories = [
-  [ 'name' => 'Fashion', 'icon' => 'shirt', 'color' => 'from-pink-500 to-rose-500', 'count' => '120+' ],
-  [ 'name' => 'Watches', 'icon' => 'watch', 'color' => 'from-blue-500 to-indigo-500', 'count' => '85+' ],
-  [ 'name' => 'Electronics', 'icon' => 'headphones', 'color' => 'from-purple-500 to-violet-500', 'count' => '200+' ],
-  [ 'name' => 'Mobile', 'icon' => 'smartphone', 'color' => 'from-green-500 to-emerald-500', 'count' => '150+' ],
-  [ 'name' => 'Automotive', 'icon' => 'car', 'color' => 'from-orange-500 to-red-500', 'count' => '95+' ],
-  [ 'name' => 'Home & Garden', 'icon' => 'home', 'color' => 'from-teal-500 to-cyan-500', 'count' => '180+' ],
+  [ 'name' => 'Perawatan Bayi', 'icon' => 'baby', 'color' => 'from-emerald-500 to-teal-500', 'count' => '25+' ],
+  [ 'name' => 'Minyak Alami', 'icon' => 'oil', 'color' => 'from-blue-500 to-indigo-500', 'count' => '15+' ],
+  [ 'name' => 'Produk Anak', 'icon' => 'child', 'color' => 'from-purple-500 to-violet-500', 'count' => '30+' ],
+  [ 'name' => 'Aromaterapi', 'icon' => 'flower', 'color' => 'from-pink-500 to-rose-500', 'count' => '20+' ],
+  [ 'name' => 'Kesehatan', 'icon' => 'heart', 'color' => 'from-orange-500 to-red-500', 'count' => '18+' ],
+  [ 'name' => 'Bundle Hemat', 'icon' => 'gift', 'color' => 'from-teal-500 to-cyan-500', 'count' => '12+' ],
 ];
 $icons = [
-  'shirt' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 3.13a4 4 0 0 0-8 0L2 6v2l4 2v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-9l4-2V6z"/></svg>',
-  'watch' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 9v3l2 2"/><path d="M16.51 7.49L17.5 4.5M7.49 7.49L6.5 4.5M16.51 16.51l.99 3M7.49 16.51l-.99 3"/></svg>',
-  'headphones' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><rect x="2" y="18" width="4" height="4" rx="1"/><rect x="18" y="18" width="4" height="4" rx="1"/></svg>',
-  'smartphone' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>',
-  'car' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 13l1-2a2 2 0 0 1 2-1h12a2 2 0 0 1 2 1l1 2"/><rect x="5" y="6" width="14" height="7" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>',
-  'home' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9.5L12 4l9 5.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z"/><path d="M9 22V12h6v10"/></svg>',
+  'baby' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M8 14s2-2 4-2 4 2 4 2v6H8v-6z"/></svg>',
+  'oil' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20m-8-8a8 8 0 1 1 16 0"/></svg>',
+  'child' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M9 18v-3c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v3"/></svg>',
+  'flower' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3c0 1.5 1.5 3 3 3s3-1.5 3-3a3 3 0 0 0-3-3z"/><path d="M19 12a3 3 0 0 0-3-3c-1.5 0-3 1.5-3 3s1.5 3 3 3a3 3 0 0 0 3-3z"/><circle cx="12" cy="12" r="2"/></svg>',
+  'heart' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7 7-7z"/></svg>',
+  'gift' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 5 12 5s1-2 4.5-2a2.5 2.5 0 0 1 0 5"/></svg>',
 ];
 @endphp
-<section class="py-20 bg-white/50">
+<section class="py-20 bg-gradient-to-br from-[#528B67] to-[#614DAC]">
   <div class="container mx-auto px-4">
     <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-gray-900 mb-4">Shop by Category</h2>
-      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-        Jelajahi koleksi pilihan yang dirancang untuk gaya hidup Anda
+      <h2 class="text-4xl font-bold bg-gradient-to-r from-white to-gray-100 bg-clip-text text-transparent mb-4">Kategori Produk Kami</h2>
+      <p class="text-xl text-gray-100 max-w-2xl mx-auto">
+        Temukan produk perawatan alami terbaik untuk keluarga tercinta
       </p>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
       @foreach ($categories as $category)
-        <div class="group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 bg-white/80 backdrop-blur-sm hover:scale-105 rounded-2xl">
+        <div class="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white/95 backdrop-blur-sm hover:scale-105 rounded-2xl shadow-lg">
           <div class="p-6 text-center">
-            <div class="w-16 h-16 bg-gradient-to-r {{ $category['color'] }} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:rotate-6 transition-transform duration-300">
+            <div class="w-16 h-16 bg-gradient-to-r {{ $category['color'] }} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:rotate-6 transition-transform duration-300 shadow-md">
               {!! $icons[$category['icon']] !!}
             </div>
             <h3 class="font-semibold text-gray-900 mb-1">{{ $category['name'] }}</h3>
-            <p class="text-sm text-gray-500">{{ $category['count'] }} items</p>
+            <p class="text-sm text-gray-600">{{ $category['count'] }} produk</p>
           </div>
         </div>
       @endforeach
     </div>
     <div class="text-center mt-12">
-      <button class="border border-gray-300 px-8 py-3 text-lg font-semibold rounded-lg bg-white hover:bg-gray-50 transition">
-        View All Categories
+      <button class="border-2 border-white/30 px-8 py-3 text-lg font-semibold rounded-lg bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-300">
+        Lihat Semua Kategori
       </button>
     </div>
   </div>

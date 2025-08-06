@@ -1,23 +1,29 @@
 <!-- Carousel Banner Produk -->
-<section class="relative">
+<section class="relative overflow-hidden">
   <div x-data="{
     currentSlide: 0,
     banners: [
       {
-        title: 'CAROUSEL BANNER PRODUK',
-        subtitle: 'Temukan Produk Terbaik untuk Si Kecil',
+        title: 'GENTLE LIVING',
+        subtitle: 'Temukan Produk Terbaik untuk Si Kecil dengan Kualitas Premium',
         image: '/images/banner1.jpg',
         cta: 'Belanja Sekarang',
-        bgColor: 'from-blue-400 to-purple-500'
+        bgColor: 'from-emerald-500 to-blue-600'
       },
       {
-        title: 'GENTLE BABY PRODUCTS',
-        subtitle: 'Perawatan Lembut untuk Buah Hati Anda',
+        title: 'PERAWATAN ALAMI',
+        subtitle: 'Produk Berkualitas Tinggi yang Aman untuk Buah Hati Anda',
         image: '/images/banner2.jpg',
         cta: 'Lihat Koleksi',
-        bgColor: 'from-green-400 to-blue-500'
+        bgColor: 'from-blue-500 to-purple-600'
       },
       {
+        title: 'DIPERCAYA KELUARGA',
+        subtitle: 'Solusi Terpercaya untuk Kebutuhan Perawatan Si Kecil',
+        image: '/images/banner3.jpg',
+        cta: 'Pelajari Lebih Lanjut',
+        bgColor: 'from-purple-500 to-pink-500'
+      }
         title: 'PRODUK BERKUALITAS TINGGI',
         subtitle: 'Dikembangkan oleh Ahli untuk Si Kecil',
         image: '/images/banner3.jpg',
