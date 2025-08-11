@@ -20,8 +20,11 @@ Route::get('/products/{id}', function ($id) {
     return view('product-detail');
 })->name('product.detail');
 Route::get('/categories', function () {
-    return view('categories');
+    return view('history');
 });
+Route::get('/history', function () {
+    return view('history');
+})->name('history');
 Route::get('/about', function () {
     return view('about');
 });

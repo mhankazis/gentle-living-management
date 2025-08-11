@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 50" class="w-full h-full">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0284c7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="180" height="50" fill="white" rx="6"/>
+  
+  <!-- Icon/Symbol -->
+  <circle cx="20" cy="25" r="12" fill="url(#logoGradient)"/>
+  <path d="M16 21 L20 25 L24 21" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16 29 L20 25 L24 29" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Main Text -->
+  <text x="40" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1f2937">Gentle</text>
+  <text x="40" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#6b7280">Living</text>
+  
+  <!-- Decorative dots -->
+  <circle cx="140" cy="18" r="1.5" fill="#059669" opacity="0.6"/>
+  <circle cx="148" cy="15" r="1" fill="#0284c7" opacity="0.4"/>
+  <circle cx="152" cy="22" r="0.8" fill="#059669" opacity="0.3"/>
+</svg>

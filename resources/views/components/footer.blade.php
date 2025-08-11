@@ -33,7 +33,7 @@
           <li><a href="/about" class="text-gray-200 hover:text-white transition-colors">Visi & Misi</a></li>
           <li><a href="#" class="text-gray-200 hover:text-white transition-colors">Karir</a></li>
           <li><a href="/products" class="text-gray-200 hover:text-white transition-colors">Produk Kami</a></li>
-          <li><a href="/categories" class="text-gray-200 hover:text-white transition-colors">Kategori</a></li>
+          <li><a href="/categories" class="text-gray-200 hover:text-white transition-colors">Riwayat Pesanan</a></li>
         </ul>
       </div>
       <div>

@@ -16,7 +16,7 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
             <nav class="hidden md:flex items-center space-x-8">
                 <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Beranda</a>
                 <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Produk</a>
-                <a href="/categories" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Riwayat</a>
+                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Riwayat</a>
                 <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Tentang</a>
             </nav>
             <div class="flex items-center space-x-4">
@@ -74,7 +74,7 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
             <nav class="flex flex-col space-y-2">
                 <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Home</a>
                 <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Products</a>
-                <a href="/categories" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Categories</a>
+                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Riwayat</a>
                 <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors py-2">About</a>
             </nav>
         </div>
