@@ -203,6 +203,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Tentang Produk dengan fitur Load More -->
     <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow" x-show="product"
         x-data="{
@@ -226,6 +227,7 @@
             </template>
         </div>
     </div>
+    
     <!-- Penilaian Produk -->
     <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow">
         <h2 class="text-xl font-bold text-gray-900 mb-4">Penilaian Produk</h2>
@@ -259,6 +261,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Kategori Serupa -->
     <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow">
         <h2 class="text-xl font-bold text-gray-900 mb-4 text-center">Kategori Serupa</h2>
@@ -273,6 +276,7 @@
             </template>
         </div>
     </div>
+    
     <!-- Produk Lainnya -->
     <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow">
         <h2 class="text-xl font-bold text-gray-900 mb-4 text-center">Produk Lainnya</h2>
