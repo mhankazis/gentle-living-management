@@ -18,7 +18,13 @@
                 description: 'Minyak bayi yang menghilangkan pereda batuk dan flu pada anak bayi',
                 features: ['Minyak Esensial', 'Aromaterapi', 'Relaksasi', 'Pereda batuk dan flu', 'Bebas Bahan Kimia'],
                 inStock: true,
-                stockCount: 15
+                stockCount: 15,
+                variants: [
+                    { name: 'Classic', image: 'bg-gradient-to-br from-slate-200 to-slate-300' },
+                    { name: 'Eucalyptus', image: 'bg-gradient-to-br from-blue-200 to-blue-300' },
+                    { name: 'Lavender', image: 'bg-gradient-to-br from-purple-200 to-purple-300' },
+                    { name: 'Chamomile', image: 'bg-gradient-to-br from-green-200 to-green-300' }
+                ]
             },
             {
                 id: 2,
@@ -33,7 +39,13 @@
                 description: 'Minyak bayi bagi bayi yang kesusahan untuk tidur',
                 features: ['Minyak Esensial', 'Aromaterapi', 'Relaksasi', 'Tidur Nyenyak', 'Bebas Bahan Kimia'],
                 inStock: true,
-                stockCount: 8
+                stockCount: 8,
+                variants: [
+                    { name: 'Lavender', image: 'bg-gradient-to-br from-blue-200 to-blue-300' },
+                    { name: 'Chamomile', image: 'bg-gradient-to-br from-indigo-200 to-indigo-300' },
+                    { name: 'Vanilla', image: 'bg-gradient-to-br from-purple-200 to-purple-300' },
+                    { name: 'Rose', image: 'bg-gradient-to-br from-pink-200 to-pink-300' }
+                ]
             },
             {
                 id: 3,
@@ -48,7 +60,13 @@
                 description: 'Minyak bayi yang mengusir nyamuk dan serangga dengan aman.',
                 features: ['Minyak Esensial', 'Aromaterapi', 'Relaksasi', 'Pengusir nyamuk dan serangga', 'Bebas Bahan Kimia'],
                 inStock: true,
-                stockCount: 25
+                stockCount: 25,
+                variants: [
+                    { name: 'Citronella', image: 'bg-gradient-to-br from-green-200 to-green-300' },
+                    { name: 'Lemongrass', image: 'bg-gradient-to-br from-emerald-200 to-emerald-300' },
+                    { name: 'Peppermint', image: 'bg-gradient-to-br from-teal-200 to-teal-300' },
+                    { name: 'Tea Tree', image: 'bg-gradient-to-br from-cyan-200 to-cyan-300' }
+                ]
             },
             {
                 id: 4,
@@ -63,7 +81,13 @@
                 description: 'Minyak bayi dengan formula khusus untuk memperlancar ASI ibu hamil.',
                 features: ['Minyak Esensial', 'Aromaterapi', 'Relaksasi', 'Pelancar asi', 'Bebas Bahan Kimia'],
                 inStock: true,
-                stockCount: 5
+                stockCount: 5,
+                variants: [
+                    { name: 'Original', image: 'bg-gradient-to-br from-gray-200 to-gray-300' },
+                    { name: 'Fennel', image: 'bg-gradient-to-br from-orange-200 to-orange-300' },
+                    { name: 'Ginger', image: 'bg-gradient-to-br from-red-200 to-red-300' },
+                    { name: 'Turmeric', image: 'bg-gradient-to-br from-yellow-200 to-yellow-300' }
+                ]
             },
             {
                 id: 5,
@@ -78,7 +102,13 @@
                 description: 'Minyak bayi dengan aroma menenangkan untuk membantu atasi bayi pegal.',
                 features: ['Minyak Esensial', 'Aromaterapi', 'Relaksasi', 'Bebas Bahan Kimia'],
                 inStock: true,
-                stockCount: 12
+                stockCount: 12,
+                variants: [
+                    { name: 'Rose', image: 'bg-gradient-to-br from-rose-200 to-rose-300' },
+                    { name: 'Jasmine', image: 'bg-gradient-to-br from-pink-200 to-pink-300' },
+                    { name: 'Geranium', image: 'bg-gradient-to-br from-red-200 to-red-300' },
+                    { name: 'Ylang Ylang', image: 'bg-gradient-to-br from-purple-200 to-purple-300' }
+                ]
             },
             {
                 id: 6,
@@ -93,45 +123,77 @@
                 description: 'Minyak bayi untuk meningkatkan daya tahan tubuh dan kesehatan si kec il.',
                 features: ['Minyak Esensial', 'Aromaterapi', 'Relaksasi', 'Meningkatkan Daya Tahan Tubuh', 'Bebas Bahan Kimia'],
                 inStock: true,
-                stockCount: 18
+                stockCount: 18,
+                variants: [
+                    { name: 'Original', image: 'bg-gradient-to-br from-yellow-200 to-yellow-300' },
+                    { name: 'Orange', image: 'bg-gradient-to-br from-orange-200 to-orange-300' },
+                    { name: 'Lemon', image: 'bg-gradient-to-br from-lime-200 to-lime-300' },
+                    { name: 'Grapefruit', image: 'bg-gradient-to-br from-pink-200 to-pink-300' }
+                ]
             }
         ],
         product: null,
+        selectedVariant: 0,
+        currentImage: '',
         quantity: 1,
         isLiked: false,
         init() {
             const url = window.location.pathname;
             const id = parseInt(url.split('/').pop());
             this.product = this.allProducts.find(p => p.id === id);
+            this.currentImage = this.product?.image || '';
+        },
+        selectVariant(index) {
+            this.selectedVariant = index;
+            this.currentImage = this.product.variants[index].image;
         },
         addToCart() {
-            alert(`${this.quantity} ${this.product.name} added to your cart`);
+            const variantName = this.product.variants[this.selectedVariant].name;
+            alert(`${this.quantity} ${this.product.name} (${variantName}) added to your cart`);
         }
     }"
     x-init="init()"
 >
     @include('components.header')
     <div class="container mx-auto px-4 py-8" x-show="product">
-        <button 
-            type="button"
-            class="mb-6 text-blue-600 hover:underline font-medium"
-            onclick="history.back()"
-        >← Back</button>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Breadcrumb -->
+        <nav class="mb-6">
+            <ol class="flex items-center space-x-2 text-sm text-gray-500">
+                <li><a href="/" class="hover:text-gray-700">Home</a></li>
+                <li>/</li>
+                <li><span x-text="product ? product.category : 'Kategori 1'"></span></li>
+                <li>/</li>
+                <li><span class="text-gray-900 font-medium" x-text="product ? product.name : 'Produk 1'"></span></li>
+            </ol>
+        </nav>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {{-- Product Image --}}
-            <div class="space-y-4">
-                <div :class="`aspect-square ${product.image} rounded-lg relative overflow-hidden`">
-                    <img :src="`/images/products/${product.id}.jpg`" alt="" class="object-cover w-full h-full">
+            <div class="flex gap-4">
+                <!-- Main Product Image -->
+                <div class="flex-1">
+                    <div :class="`aspect-square ${currentImage || product.image} rounded-lg relative overflow-hidden`">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <svg class="w-20 h-20 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 4 other product images stacked vertically -->
-                    <div class="flex flex-row gap-4">
-                        <template x-for="other in allProducts.filter(p => p.id !== product.id).slice(0, 4)">
-                            <div :class="`aspect-square w-20 h-20 bg-gray-300 rounded-lg border cursor-pointer hover:ring-2 hover:ring-blue-400 transition`" @click="product = other">
-                                <!-- Bisa tambahkan gambar asli jika ada, ini hanya background -->
+                <!-- Product Variants Thumbnails - Right side vertical -->
+                <div class="flex flex-col gap-3">
+                    <template x-for="(variant, index) in product.variants" :key="index">
+                        <div :class="`aspect-square w-20 h-20 rounded-lg border-2 cursor-pointer transition-all duration-200 ${selectedVariant === index ? 'border-blue-500 ring-1 ring-blue-300' : 'border-gray-200 hover:border-gray-300'}`" 
+                             @click="selectVariant(index)"
+                             :title="variant.name">
+                            <div :class="`w-full h-full ${variant.image} rounded-lg flex items-center justify-center`">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
                             </div>
-                        </template>
-                    </div>
+                        </div>
+                    </template>
+                </div>
             </div>
             {{-- Product Info --}}
             <div class="space-y-6" x-show="product">
@@ -147,18 +209,23 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-4xl font-bold text-gray-900" x-text="`$${product.price}`"></span>
-                    <span class="text-2xl text-gray-500 line-through" x-text="`$${product.originalPrice}`"></span>
-                    <span class="text-green-600 border border-green-200 rounded-full px-3 py-1 text-sm font-semibold">Save $<span x-text="product.originalPrice - product.price"></span></span>
+                    <span class="text-4xl font-bold text-teal-600" x-text="`Rp${product.price * 1000}`"></span>
+                    <span class="text-2xl text-gray-500 line-through" x-text="`Rp${product.originalPrice * 1000}`"></span>
                 </div>
                 <p class="text-gray-600 text-lg leading-relaxed" x-text="product.description"></p>
                 <!-- Varian Produk -->
-                <div class="mb-4">
-                    <span class="font-semibold text-lg">Varian</span>
-                    <div class="flex gap-2 mt-2">
-                        <button type="button" class="px-4 py-2 rounded-lg border bg-white font-medium" :class="selectedVariant === 'Varian 1' ? 'ring-2 ring-blue-400' : ''" @click="selectedVariant = 'Varian 1'">Varian 1</button>
-                        <button type="button" class="px-4 py-2 rounded-lg border bg-white font-medium" :class="selectedVariant === 'Varian 2' ? 'ring-2 ring-blue-400' : ''" @click="selectedVariant = 'Varian 2'">Varian 2</button>
-                        <button type="button" class="px-4 py-2 rounded-lg border bg-white font-medium" :class="selectedVariant === 'Varian 3' ? 'ring-2 ring-blue-400' : ''" @click="selectedVariant = 'Varian 3'">Varian 3</button>
+                                <!-- Variant Selector -->
+                <div>
+                    <span class="font-semibold text-lg">Varian: <span class="text-blue-600" x-text="product.variants[selectedVariant].name"></span></span>
+                    <div class="flex gap-2 mt-2 flex-wrap">
+                        <template x-for="(variant, index) in product.variants" :key="index">
+                            <button type="button" 
+                                class="px-4 py-2 rounded-lg border bg-white font-medium hover:bg-gray-50 transition-all duration-200" 
+                                :class="selectedVariant === index ? 'ring-2 ring-blue-500 border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300'" 
+                                @click="selectVariant(index)"
+                                x-text="variant.name">
+                            </button>
+                        </template>
                     </div>
                 </div>
                 <!-- Features -->
@@ -175,29 +242,41 @@
                 </div>
                 <!-- Quantity, Stock, and Add to Cart -->
                 <div class="space-y-4">
-                    <div class="flex items-center space-x-4">
-                        <span class="font-medium">Kuantitas:</span>
-                        <div class="flex items-center border rounded-lg">
-                            <button type="button" class="h-10 w-10 flex items-center justify-center" @click="quantity = Math.max(1, quantity - 1)">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            </button>
-                            <span class="px-4 py-2 font-medium" x-text="quantity"></span>
-                            <button type="button" class="h-10 w-10 flex items-center justify-center" @click="quantity = quantity + 1">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            </button>
+                    <div class="flex items-center space-x-6">
+                        <div class="flex items-center space-x-3">
+                            <span class="font-medium text-gray-700">Kuantitas</span>
+                            <div class="flex items-center border border-gray-300 rounded-lg">
+                                <button type="button" class="h-10 w-10 flex items-center justify-center hover:bg-gray-50 transition-colors" @click="quantity = Math.max(1, quantity - 1)">
+                                    <svg class="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                </button>
+                                <input type="text" :value="quantity" class="w-16 h-10 text-center border-0 focus:ring-0 font-medium" readonly>
+                                <button type="button" class="h-10 w-10 flex items-center justify-center hover:bg-gray-50 transition-colors" @click="quantity = quantity + 1">
+                                    <svg class="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                </button>
+                            </div>
                         </div>
-                        <span class="ml-4 text-gray-600">Stok <span x-text="product.stockCount"></span></span>
+                        <div class="text-gray-600">
+                            <span class="font-medium">Stok</span> <span x-text="product.stockCount" class="font-semibold"></span>
+                        </div>
                     </div>
-                    <div class="flex space-x-4">
+                    
+                    <div class="flex space-x-3">
                         <button 
                             type="button"
                             @click="addToCart"
-                            class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white h-12 rounded-lg font-semibold flex items-center justify-center"
+                            class="flex items-center justify-center px-6 py-3 border border-teal-500 text-teal-600 rounded-lg font-medium hover:bg-teal-50 transition-colors"
                         >
-                            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-                            Add to Cart
+                            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5-5M7 13l-2.5 5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                            </svg>
+                            Masukkan Keranjang
                         </button>
-                        <button type="button" class="h-12 px-6 rounded-lg border border-gray-300 font-semibold bg-white">Buy Now</button>
+                        <button 
+                            type="button" 
+                            class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+                        >
+                            Beli Sekarang
+                        </button>
                     </div>
                 </div>
             </div>
