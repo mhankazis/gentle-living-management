@@ -3,22 +3,22 @@
 $cartItems = [
   [
     'id' => 1,
-    'name' => 'Premium Wireless Headphones',
+    'name' => 'Gentle Oil Cough n Flu',
     'price' => 299,
     'quantity' => 1,
     'image' => 'bg-gradient-to-br from-slate-200 to-slate-300',
   ],
   [
     'id' => 2,
-    'name' => 'Smart Fitness Watch',
+    'name' => 'Gentle Baby Deep Sleep',
     'price' => 249,
     'quantity' => 2,
     'image' => 'bg-gradient-to-br from-blue-200 to-blue-300',
   ],
   [
     'id' => 3,
-    'name' => 'Designer Leather Wallet',
-    'price' => 79,
+    'name' => 'Gentle Baby Bye Bugs',
+    'price' => 49,
     'quantity' => 1,
     'image' => 'bg-gradient-to-br from-amber-200 to-amber-300',
   ],

@@ -87,13 +87,22 @@
           <div class="w-full flex-shrink-0">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-6">
               <template x-for="(testimonial, index) in testimonials.slice(0, 3)" :key="index">
-                <div class="bg-white rounded-xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300 min-h-[280px] flex flex-col">
+                <div class="bg-white rounded-xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300 min-h-[280px] flex flex-col" x-data="{ expanded: false }">
                   <div class="flex items-start space-x-6 flex-1">
                     <div class="w-20 h-20 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex-shrink-0 flex items-center justify-center shadow-lg">
                       <span class="text-white font-bold text-2xl" x-text="testimonial.author.split(' ')[1].charAt(0)"></span>
                     </div>
                     <div class="flex-1 flex flex-col justify-between h-full">
-                      <p class="text-gray-700 mb-6 leading-relaxed text-base flex-1" x-text="testimonial.text"></p>
+                      <p class="text-gray-700 mb-6 leading-relaxed text-base flex-1"
+                         :class="!expanded ? 'max-h-24 overflow-hidden' : ''"
+                         x-text="testimonial.text"
+                         x-ref="text"></p>
+                      <template x-if="!expanded && $refs.text && $refs.text.scrollHeight > $refs.text.clientHeight">
+                        <button class="text-blue-500 underline text-sm mt-2 self-start" @click="expanded = true">Load More</button>
+                      </template>
+                      <template x-if="expanded">
+                        <button class="text-blue-500 underline text-sm mt-2 self-start" @click="expanded = false">Show Less</button>
+                      </template>
                       <h4 class="font-bold text-blue-600 text-lg" x-text="testimonial.author"></h4>
                     </div>
                   </div>
@@ -106,13 +115,22 @@
           <div class="w-full flex-shrink-0">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-6">
               <template x-for="(testimonial, index) in testimonials.slice(3, 6)" :key="index">
-                <div class="bg-white rounded-xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300 min-h-[280px] flex flex-col">
+                <div class="bg-white rounded-xl p-8 shadow-xl transform hover:scale-105 transition-transform duration-300 min-h-[280px] flex flex-col" x-data="{ expanded: false }">
                   <div class="flex items-start space-x-6 flex-1">
                     <div class="w-20 h-20 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex-shrink-0 flex items-center justify-center shadow-lg">
                       <span class="text-white font-bold text-2xl" x-text="testimonial.author.split(' ')[1].charAt(0)"></span>
                     </div>
                     <div class="flex-1 flex flex-col justify-between h-full">
-                      <p class="text-gray-700 mb-6 leading-relaxed text-base flex-1" x-text="testimonial.text"></p>
+                      <p class="text-gray-700 mb-6 leading-relaxed text-base flex-1"
+                         :class="!expanded ? 'max-h-24 overflow-hidden' : ''"
+                         x-text="testimonial.text"
+                         x-ref="text"></p>
+                      <template x-if="!expanded && $refs.text && $refs.text.scrollHeight > $refs.text.clientHeight">
+                        <button class="text-blue-500 underline text-sm mt-2 self-start" @click="expanded = true">Load More</button>
+                      </template>
+                      <template x-if="expanded">
+                        <button class="text-blue-500 underline text-sm mt-2 self-start" @click="expanded = false">Show Less</button>
+                      </template>
                       <h4 class="font-bold text-blue-600 text-lg" x-text="testimonial.author"></h4>
                     </div>
                   </div>

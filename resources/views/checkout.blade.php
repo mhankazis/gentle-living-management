@@ -14,9 +14,9 @@
                 payment: 'credit-card',
                 isProcessing: false,
                 cart: [
-                    { id: 1, name: 'Premium Wireless Headphones', price: 299, quantity: 1 },
-                    { id: 2, name: 'Smart Fitness Watch', price: 249, quantity: 2 },
-                    { id: 3, name: 'Designer Leather Wallet', price: 79, quantity: 1 }
+                    { id: 1, name: 'Gentle Oil Cough n Flu', price: 299, quantity: 1 },
+                    { id: 2, name: 'Gentle Baby Deep Sleep', price: 249, quantity: 2 },
+                    { id: 3, name: 'Gentle Baby Bye Bugs', price: 49, quantity: 1 }
                 ],
                 get subtotal() {
                     return this.cart.reduce((sum, i) => sum + i.price * i.quantity, 0)

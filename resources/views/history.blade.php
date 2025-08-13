@@ -51,7 +51,7 @@
                     
                     <!-- Product Info -->
                     <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Baby Oil Telon Organic</h3>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Gentle Baby Joy</h3>
                         <p class="text-gray-600 text-sm mb-2">Variasi: Varian 1</p>
                         <p class="text-gray-600 text-sm">x1</p>
                     </div>
@@ -59,7 +59,7 @@
                 
                 <!-- Price -->
                 <div class="text-right">
-                    <p class="text-lg font-semibold text-gray-800">Rp125.000</p>
+                    <p class="text-lg font-semibold text-gray-800">$189</p>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
             <div class="flex items-center justify-between pt-4 border-t border-gray-200">
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-600">Total Pesanan:</span>
-                    <span class="text-xl font-bold text-blue-600">Rp125.000</span>
+                    <span class="text-xl font-bold text-blue-600">$189</span>
                 </div>
                 
                 <div class="flex space-x-3">
@@ -115,7 +115,7 @@
                     
                     <!-- Product Info -->
                     <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Minyak Kemiri Asli</h3>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Gentle Baby Imboost</h3>
                         <p class="text-gray-600 text-sm mb-2">Variasi: Kemasan 100ml</p>
                         <p class="text-gray-600 text-sm">x2</p>
                     </div>
@@ -123,7 +123,7 @@
                 
                 <!-- Price -->
                 <div class="text-right">
-                    <p class="text-lg font-semibold text-gray-800">Rp190.000</p>
+                    <p class="text-lg font-semibold text-gray-800">$89</p>
                 </div>
             </div>
 
@@ -139,7 +139,7 @@
             <div class="flex items-center justify-between pt-4 border-t border-gray-200">
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-600">Total Pesanan:</span>
-                    <span class="text-xl font-bold text-blue-600">Rp190.000</span>
+                    <span class="text-xl font-bold text-blue-600">$89</span>
                 </div>
                 
                 <div class="flex space-x-3">

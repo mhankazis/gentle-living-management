@@ -3,10 +3,12 @@ $selectedCategory = request('category', 'all');
 $sortBy = request('sort', 'name');
 $categories = [
     ['id' => 'all', 'name' => 'All Products', 'count' => 156],
-    ['id' => 'electronics', 'name' => 'Electronics', 'count' => 45],
-    ['id' => 'fashion', 'name' => 'Fashion', 'count' => 67],
-    ['id' => 'home', 'name' => 'Home & Garden', 'count' => 23],
-    ['id' => 'sports', 'name' => 'Sports', 'count' => 21],
+    ['id' => 'Perawatan Bayi', 'name' => 'Perawatan Bayi', 'count' => 45],
+    ['id' => 'Minyak Alami', 'name' => 'Minyak Alami', 'count' => 67],
+    ['id' => 'Produk Anak', 'name' => 'Produk Anak', 'count' => 23],
+    ['id' => 'Aromaterapi', 'name' => 'Aromaterapi', 'count' => 21],
+    ['id' => 'Kesehatan', 'name' => 'Kesehatan', 'count' => 23],
+    ['id' => 'Bundle Hemat', 'name' => 'Bundle Hemat', 'count' => 34],
 ];
 $sortOptions = [
     ['id' => 'name', 'name' => 'Name (A-Z)'],
