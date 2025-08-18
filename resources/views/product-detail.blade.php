@@ -77,7 +77,7 @@
 
                 <!-- Product Variants Thumbnails - Right side vertical -->
                 <div class="flex flex-col gap-3">
-                    <template x-for="(variant, index) in product.variants" :key="index">
+                    <template x-for="(variant, index) in product.variants.slice(0, 3)" :key="index">
                         <div :class="`aspect-square w-20 h-20 rounded-lg border-2 cursor-pointer transition-all duration-200 ${selectedVariant === index ? 'border-blue-500 ring-1 ring-blue-300' : 'border-gray-200 hover:border-gray-300'}`" 
                              @click="selectVariant(index)"
                              :title="variant.name">
