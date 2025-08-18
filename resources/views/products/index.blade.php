@@ -38,7 +38,7 @@
                             @foreach($categories as $cat)
                                 <a href="{{ route('products.category', $cat->category_id) }}" 
                                    class="flex items-center justify-between p-3 rounded-lg transition-all duration-200 {{ isset($category) && $category->category_id == $cat->category_id ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'hover:bg-gray-50' }}">
-                                    <span>{{ $cat->category_name }}</span>
+                                    <span>{{ $cat->name_category }}</span>
                                     <span class="text-sm {{ isset($category) && $category->category_id == $cat->category_id ? 'text-white' : 'text-gray-500' }}">{{ $cat->items->count() }}</span>
                                 </a>
                             @endforeach
@@ -109,7 +109,7 @@
                 <div class="mb-6">
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">
                         @if(isset($category))
-                            {{ $category->category_name }}
+                            {{ $category->name_category }}
                         @else
                             Semua produk
                         @endif
@@ -153,7 +153,7 @@
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum ada produk</h3>
                             <p class="text-gray-600">
                                 @if(isset($category))
-                                    Belum ada produk di kategori {{ $category->category_name }}.
+                                    Belum ada produk di kategori {{ $category->name_category }}.
                                 @else
                                     Belum ada produk yang tersedia saat ini.
                                 @endif

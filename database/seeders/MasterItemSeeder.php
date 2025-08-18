@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\MasterItem;
 use App\Models\MasterCategory;
 
@@ -11,16 +12,16 @@ class MasterItemSeeder extends Seeder
     public function run()
     {
         // Clear existing data
-        \DB::table('master_items')->delete();
-        \DB::table('master_categories')->delete();
+        DB::table('master_items')->delete();
+        DB::table('master_categories')->delete();
 
         // Create categories first
         $categories = [
-            ['category_name' => 'Minyak Bayi', 'description' => 'Produk minyak untuk bayi dan anak'],
-            ['category_name' => 'Aromaterapi', 'description' => 'Produk aromaterapi dan relaksasi'],
-            ['category_name' => 'Kesehatan', 'description' => 'Produk kesehatan alami'],
-            ['category_name' => 'Perawatan Kulit', 'description' => 'Produk perawatan kulit natural'],
-            ['category_name' => 'Essential Oil', 'description' => 'Minyak esensial murni'],
+            ['name_category' => 'Minyak Bayi'],
+            ['name_category' => 'Aromaterapi'],
+            ['name_category' => 'Kesehatan'],
+            ['name_category' => 'Perawatan Kulit'],
+            ['name_category' => 'Essential Oil'],
         ];
 
         foreach ($categories as $category) {
