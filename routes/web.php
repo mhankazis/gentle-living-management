@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,12 +14,9 @@ Route::get('/', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::view('/cart', 'cart')->name('cart');
-Route::get('/products', function () {
-    return view('products');
-});
-Route::get('/products/{id}', function ($id) {
-    return view('product-detail');
-})->name('product.detail');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
+Route::get('/categories/{id}', [ProductController::class, 'getByCategory'])->name('products.category');
 Route::get('/categories', function () {
     return view('history');
 });
