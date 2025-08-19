@@ -26,6 +26,7 @@ class MasterUser extends Authenticatable
         'phone',
         'password',
         'jwt_token',
+        'role',
     ];
 
     /**
@@ -50,5 +51,37 @@ class MasterUser extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if user has specific role
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Check if user is admin or super admin
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['admin', 'super_admin']);
+    }
+
+    /**
+     * Check if user is super admin
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    /**
+     * Check if user is regular user
+     */
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
     }
 }

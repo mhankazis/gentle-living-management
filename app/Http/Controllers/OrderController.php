@@ -98,20 +98,20 @@ class OrderController extends Controller
         $order = Order::findOrFail($orderId);
         
         if (!$order->canBeCancelled()) {
-            return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah diproses');
+            return back()->with('error', 'Pesanan tidak dapat dibatalkan karena sudah dikirim atau diterima');
         }
         
         $request->validate([
             'cancellation_reason' => 'required|string|max:500'
         ]);
         
+        // User hanya mengajukan request, bukan langsung cancel
         $order->update([
             'cancellation_reason' => $request->cancellation_reason,
-            'status' => 'cancelled',
-            'cancelled_at' => now()
+            'cancellation_requested_at' => now()
         ]);
         
         return redirect()->route('orders.track', $order->order_number)
-                        ->with('success', 'Permintaan pembatalan telah dikirim');
+                        ->with('success', 'Permintaan pembatalan telah dikirim ke admin untuk ditinjau');
     }
 }

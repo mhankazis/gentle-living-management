@@ -29,13 +29,22 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100">
                         <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
-                        <span class="hidden md:block text-sm font-medium">{{ auth()->user()->name }}</span>
+                        <div class="hidden md:block text-left">
+                            <div class="text-sm font-medium">{{ auth()->user()->name }}</div>
+                            <div class="text-xs text-gray-500">{{ ucfirst(auth()->user()->role) }}</div>
+                        </div>
                     </button>
                     <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-56 bg-white border shadow-lg rounded z-50">
                         <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M9 9h6v6H9z"/></svg>
                             <span>Dashboard</span>
                         </a>
+                        @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 text-blue-600">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <span>Admin Panel</span>
+                        </a>
+                        @endif
                         <a href="{{ route('profile') }}" class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
                             <span>Profil Saya</span>

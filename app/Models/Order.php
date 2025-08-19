@@ -23,6 +23,7 @@ class Order extends Model
         'status',
         'payment_status',
         'cancellation_reason',
+        'cancellation_requested_at',
         'cancelled_at',
         'admin_notes'
     ];
@@ -31,6 +32,7 @@ class Order extends Model
         'subtotal' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
         'total' => 'decimal:2',
+        'cancellation_requested_at' => 'datetime',
         'cancelled_at' => 'datetime'
     ];
     
@@ -41,7 +43,24 @@ class Order extends Model
     
     public function canBeCancelled()
     {
-        return in_array($this->status, ['pending', 'confirmed']);
+        // User dapat request cancellation jika status belum shipped/delivered
+        return !in_array($this->status, ['shipped', 'delivered', 'cancelled']);
+    }
+
+    public function canBeDirectlyCancelled()
+    {
+        // Admin dapat langsung cancel jika belum shipped/delivered
+        return !in_array($this->status, ['shipped', 'delivered', 'cancelled']);
+    }
+
+    public function hasPendingCancellation()
+    {
+        return !is_null($this->cancellation_requested_at) && is_null($this->cancelled_at);
+    }
+
+    public function masterCustomer()
+    {
+        return $this->belongsTo(MasterCustomer::class, 'customer_email', 'email');
     }
     
     public function getStatusLabelAttribute()
