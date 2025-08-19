@@ -4,9 +4,9 @@
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50" 
     x-data="{
-        sortBy: 'name',
-        minPrice: 0,
-        maxPrice: 200000,
+        sortBy: '{{ request('sort', 'name') }}',
+        minPrice: {{ request('min_price', $priceRange->min_price ?? 0) }},
+        maxPrice: {{ request('max_price', $priceRange->max_price ?? 200000) }},
         selectedCategory: {{ isset($category) ? $category->category_id : 'null' }},
         
         formatPrice(price) {
@@ -15,8 +15,46 @@
                 currency: 'IDR',
                 minimumFractionDigits: 0
             }).format(price);
+        },
+        
+        applyFilters() {
+            const params = new URLSearchParams();
+            
+            if (this.sortBy) {
+                params.set('sort', this.sortBy);
+            }
+            
+            if (this.minPrice > {{ $priceRange->min_price ?? 0 }}) {
+                params.set('min_price', this.minPrice);
+            }
+            
+            if (this.maxPrice < {{ $priceRange->max_price ?? 200000 }}) {
+                params.set('max_price', this.maxPrice);
+            }
+            
+            let url = '{{ route('products.index') }}';
+            if (this.selectedCategory && this.selectedCategory !== 'null') {
+                url = '{{ url('/categories') }}/' + this.selectedCategory;
+            }
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            window.location.href = url;
         }
-    }">
+    }" 
+    x-init="
+        $watch('sortBy', () => applyFilters());
+        $watch('minPrice', () => {
+            clearTimeout(window.priceFilterTimeout);
+            window.priceFilterTimeout = setTimeout(() => applyFilters(), 1000);
+        });
+        $watch('maxPrice', () => {
+            clearTimeout(window.priceFilterTimeout);
+            window.priceFilterTimeout = setTimeout(() => applyFilters(), 1000);
+        });
+    ">
     @include('components.header')
     
     <div class="container mx-auto px-4 py-8">
@@ -30,13 +68,13 @@
                     <div class="mb-8">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">Kategori</h3>
                         <div class="space-y-2">
-                            <a href="{{ route('products.index') }}" 
+                            <a href="{{ route('products.index') }}{{ request()->getQueryString() ? '?' . request()->getQueryString() : '' }}" 
                                class="flex items-center justify-between p-3 rounded-lg transition-all duration-200 {{ !isset($category) ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'hover:bg-gray-50' }}">
                                 <span>Semua produk</span>
                                 <span class="text-sm {{ !isset($category) ? 'text-white' : 'text-gray-500' }}">{{ $products->total() }}</span>
                             </a>
                             @foreach($categories as $cat)
-                                <a href="{{ route('products.category', $cat->category_id) }}" 
+                                <a href="{{ route('products.category', $cat->category_id) }}{{ request()->except('category') ? '?' . http_build_query(request()->except('category')) : '' }}" 
                                    class="flex items-center justify-between p-3 rounded-lg transition-all duration-200 {{ isset($category) && $category->category_id == $cat->category_id ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'hover:bg-gray-50' }}">
                                     <span>{{ $cat->name_category }}</span>
                                     <span class="text-sm {{ isset($category) && $category->category_id == $cat->category_id ? 'text-white' : 'text-gray-500' }}">{{ $cat->items->count() }}</span>
@@ -85,17 +123,18 @@
                         <h3 class="text-lg font-bold text-gray-900 mb-4">Range Harga</h3>
                         <div class="space-y-4">
                             <div class="flex items-center gap-3">
-                                <input type="number" x-model="minPrice" placeholder="MIN" class="flex-1 p-2 border border-gray-300 rounded-lg text-sm">
+                                <input type="number" x-model="minPrice" placeholder="MIN" min="0" max="{{ $priceRange->max_price ?? 200000 }}" class="flex-1 p-2 border border-gray-300 rounded-lg text-sm">
                                 <span class="text-gray-500">—</span>
-                                <input type="number" x-model="maxPrice" placeholder="MAX" class="flex-1 p-2 border border-gray-300 rounded-lg text-sm">
+                                <input type="number" x-model="maxPrice" placeholder="MAX" min="0" max="{{ $priceRange->max_price ?? 200000 }}" class="flex-1 p-2 border border-gray-300 rounded-lg text-sm">
                             </div>
                             <div class="relative">
                                 <div class="h-2 bg-gray-200 rounded-full">
-                                    <div class="h-2 bg-gradient-to-r from-teal-400 to-blue-600 rounded-full" style="width: 70%"></div>
+                                    <div class="h-2 bg-gradient-to-r from-teal-400 to-blue-600 rounded-full" 
+                                         :style="`width: ${((maxPrice - minPrice) / {{ $priceRange->max_price ?? 200000 }}) * 100}%`"></div>
                                 </div>
                                 <div class="flex justify-between text-sm text-gray-500 mt-2">
-                                    <span>0</span>
-                                    <span>200.000</span>
+                                    <span>{{ number_format($priceRange->min_price ?? 0, 0, ',', '.') }}</span>
+                                    <span>{{ number_format($priceRange->max_price ?? 200000, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -167,14 +206,14 @@
                     <div class="flex justify-center mb-8">
                         <div class="flex items-center gap-2">
                             @if (!$products->onFirstPage())
-                                <a href="{{ $products->previousPageUrl() }}" class="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                                <a href="{{ $products->appends(request()->query())->previousPageUrl() }}" class="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                 </a>
                             @endif
                             
-                            @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                            @foreach ($products->appends(request()->query())->getUrlRange(1, $products->lastPage()) as $page => $url)
                                 @if ($page == $products->currentPage())
                                     <span class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium">{{ $page }}</span>
                                 @else
@@ -183,7 +222,7 @@
                             @endforeach
                             
                             @if ($products->hasMorePages())
-                                <a href="{{ $products->nextPageUrl() }}" class="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                                <a href="{{ $products->appends(request()->query())->nextPageUrl() }}" class="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
@@ -195,51 +234,40 @@
             </div>
         </div>
         
-        <!-- Trust Indicators -->
-        <div class="bg-white rounded-lg shadow-lg p-8 mt-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Percayakan pada EXPERT-nya! -->
-                <div class="text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-gray-900 mb-2">Percayakan pada EXPERT-nya!</h3>
-                    <p class="text-sm text-gray-600">Dikembangkan oleh Dokter Anak, Dokter Kulit, dan Psikolog Anak</p>
+        <!-- Section 4 Kolom Info dengan Icon -->
+        <div class="w-full bg-white border-t-4 border-blue-500 mt-12">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 py-8 px-4 text-center">
+                <div class="flex flex-col items-center">
+                    <span class="mb-2">
+                        <!-- Shield Icon -->
+                        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><path d="M12 3l7 4v5c0 5.25-3.5 9.74-7 10-3.5-.26-7-4.75-7-10V7l7-4z"/></svg>
+                    </span>
+                    <span class="font-semibold">Percayakan pada EXPERT-nya!</span>
+                    <span class="text-gray-600 text-sm">Dikembangkan oleh Dokter Anak, Dokter Kulit, dan Psikolog Anak</span>
                 </div>
-                
-                <!-- Gratis Ongkir -->
-                <div class="text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-gray-900 mb-2">Gratis Ongkir</h3>
-                    <p class="text-sm text-gray-600">Pengiriman Express Seluruh Indonesia*</p>
+                <div class="flex flex-col items-center">
+                    <span class="mb-2">
+                        <!-- Truck Icon -->
+                        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><rect x="1" y="7" width="15" height="13" rx="2"/><path d="M16 10h4l3 5v5a2 2 0 01-2 2H19"/><circle cx="5.5" cy="20.5" r="1.5"/><circle cx="18.5" cy="20.5" r="1.5"/></svg>
+                    </span>
+                    <span class="font-semibold">Gratis Ongkir</span>
+                    <span class="text-gray-600 text-sm">Pengiriman Ekspres Seluruh Indonesia*</span>
                 </div>
-                
-                <!-- Gratis Pengembalian -->
-                <div class="text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
-                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-gray-900 mb-2">Gratis Pengembalian</h3>
-                    <p class="text-sm text-gray-600">Gratis Pengembalian Selama 7 Hari Kerja</p>
+                <div class="flex flex-col items-center">
+                    <span class="mb-2">
+                        <!-- Box Icon -->
+                        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                    </span>
+                    <span class="font-semibold">Gratis Pengembalian</span>
+                    <span class="text-gray-600 text-sm">Gratis Pengembalian Selama 7 Hari Kerja</span>
                 </div>
-                
-                <!-- Hubungi Kami -->
-                <div class="text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
-                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-gray-900 mb-2">Hubungi Kami</h3>
-                    <p class="text-sm text-gray-600">Whatsapp +62 821-3716-1033</p>
+                <div class="flex flex-col items-center">
+                    <span class="mb-2">
+                        <!-- Chat Icon -->
+                        <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    </span>
+                    <span class="font-semibold">Hubungi Kami</span>
+                    <span class="text-gray-600 text-sm">Whatsapp +62 821-3716-1033</span>
                 </div>
             </div>
         </div>
