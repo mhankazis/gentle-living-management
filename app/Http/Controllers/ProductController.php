@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\MasterItem;
 use App\Models\MasterCategory;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -85,14 +86,29 @@ class ProductController extends Controller
     
     public function show($id)
     {
-        $product = MasterItem::with('category')->findOrFail($id);
-        $relatedProducts = MasterItem::where('category_id', $product->category_id)
-            ->where('item_id', '!=', $id)
-            ->where('stock', '>', 0)
-            ->limit(4)
-            ->get();
+        try {
+            $product = MasterItem::with('category')->findOrFail($id);
             
-        return view('product-detail', compact('product', 'relatedProducts'));
+            // Get related products based on category, excluding current product
+            $relatedProducts = MasterItem::with('category')
+                ->where('category_id', $product->category_id)
+                ->where('item_id', '!=', $id)
+                ->where('stock', '>', 0)
+                ->limit(4)
+                ->get();
+            
+            // Add image_url attribute if needed
+            $product->image_url = $product->image_url ?? asset('images/placeholder.jpg');
+            
+            foreach ($relatedProducts as $relatedProduct) {
+                $relatedProduct->image_url = $relatedProduct->image_url ?? asset('images/placeholder.jpg');
+            }
+            
+            return view('product-detail', compact('product', 'relatedProducts'));
+        } catch (\Exception $e) {
+            Log::error('Product detail error: ' . $e->getMessage());
+            return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan.');
+        }
     }
     
     public function getByCategory(Request $request, $categoryId)

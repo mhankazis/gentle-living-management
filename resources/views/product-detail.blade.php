@@ -120,11 +120,27 @@
 
                     <!-- Description -->
                     <div class="space-y-3">
-                        <h3 class="text-lg font-semibold text-gray-900">Deskripsi Produk</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">Deskripsi</h3>
                         <div class="prose prose-sm max-w-none">
                             <p class="text-gray-600 leading-relaxed">
-                                {{ $product->description_item ?: 'Produk berkualitas tinggi untuk memenuhi kebutuhan Anda. Dibuat dengan bahan terbaik dan standar kualitas tinggi.' }}
+                                {{ $product->description_item ?: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' }}
                             </p>
+                        </div>
+                    </div>
+
+                    <!-- Varian -->
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-semibold text-gray-900">Varian</h3>
+                        <div class="flex space-x-3">
+                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-blue-500 hover:text-blue-600 transition-colors">
+                                Varian 1
+                            </button>
+                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-blue-500 hover:text-blue-600 transition-colors">
+                                Varian 2
+                            </button>
+                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-blue-500 hover:text-blue-600 transition-colors">
+                                Varian 3
+                            </button>
                         </div>
                     </div>
 
@@ -233,30 +249,185 @@
                         </div>
                         @endif
 
-                        <!-- Additional Info -->
-                        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100 text-center">
-                            <div class="flex flex-col items-center space-y-1">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                                <span class="text-xs text-gray-600">Kualitas Terjamin</span>
-                            </div>
-                            <div class="flex flex-col items-center space-y-1">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                </svg>
-                                <span class="text-xs text-gray-600">Pengiriman Cepat</span>
-                            </div>
-                            <div class="flex flex-col items-center space-y-1">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                                <span class="text-xs text-gray-600">Garansi Puas</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Tentang Produk Section -->
+    <div class="container mx-auto px-4 py-8" x-data="{ showMore: false }">
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Tentang Produk</h2>
+                
+                <div class="prose prose-lg max-w-none">
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Gentle Baby Oil New Size LAUNCHING!!! 
+                    </p>
+                    
+                     <p class="text-gray-700 leading-relaxed mb-4">
+                        Gentle Baby Oil 10ml - Baby Essential Oil - Minyak Pijat Bayi Aromaterapi Minyak Urut Bayi - Baby Massage Oil Gentle Baby Oil  adalah Minyak Bayi Aromaterapi, kombinasi Essential Oil dan Sunflower Seed Oil untuk kesehatan ibu, bayi dan balita.
+                    </p>
+
+                    <!-- Always visible content -->
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-start space-x-2">
+                            <span class="text-green-600 font-bold">✓</span>
+                            <span class="text-gray-700">Bahan Alami, AMAN untuk BAYI meski tidak 0-4P.</span>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <span class="text-green-600 font-bold">✓</span>
+                            <span class="text-gray-700">BPNYA PHAT BERUSIA.</span>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible content -->
+                    <div x-show="showMore" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2">
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-start space-x-2">
+                                <span class="text-green-600 font-bold">✓</span>
+                                <span class="text-gray-700">TREE perlindungan terbaik untuk kulit.</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <span class="text-green-600 font-bold">✓</span>
+                                <span class="text-gray-700">FREE Penyabunan layanan gratis resep batuk dan flu mengulit.</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-6 space-y-4">
+                            <h3 class="font-semibold text-gray-900">VARIAN TERSEDIA:</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p><strong>1. GOLDEN GATE</strong> - Memberikan rasa yang berbeda di tubuh tiap hari</p>
+                                    <p><strong>2. COCONUT CREAM</strong> - Melindungi kulit dari kekeringan</p>
+                                    <p><strong>3. GRAPE FOOD</strong> - Mencerahkan penampilan & Memberiikan rasa sehat di kulir, tak kecil</p>
+                                    <p><strong>4. YUMMY CARBS</strong> - Mencerahkan nutrisi sereal bagi hernia kulit, antiperspirator, shambunay, dan lebih banyak</p>
+                                </div>
+                                <div>
+                                    <p><strong>5. LANOLIN</strong> - Meningkatkan daya tahan tubuh dan kelenjar</p>
+                                    <p><strong>6. PAMSODOL</strong> - Meningkatkan dan membersihkan kulit dari toksin</p>
+                                    <p><strong>7. UB BOOSTER</strong> - Membaukkan daya hidam tubun di kulit</p>
+                                    <p><strong>8. MASSAGE YOUR BABY</strong> - Pijatan bayi</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 space-y-2 text-sm text-gray-600">
+                            <p><strong>USIA:</strong> 0-3 tahun</p>
+                            <p><strong>KEMASAN:</strong> Pump bottle, botol kaca, kemasan dalam kemasan</p>
+                            <p><strong>MASA KADALUARSA:</strong> 12 bulan</p>
+                            <p><strong>NOTE:</strong></p>
+                            <p>- Buat untuk perkembangan untuk usia 0-3 bulan adalah bayi baru lahir</p>
+                            <p>- Hal terpenting yang mengurangi kuliat nutrisi kulit anak seperti air dan penyebah</p>
+                            <p>- Hindari pengiriman yang menggunakan atau dalam kondisi atau jarak dan terkena debu setengah</p>
+                            <p>- Saat sebelum makan atau dekat dari 14.00 maka akan diatur di hari berikutnya</p>
+                            <p>- No LKPOT ditempatkan di Permukaan LADENTUM7036717/31/2020</p>
+                            <p>- No DINKES adalab: KL-3729000610101  29 November 2017</p>
+                        </div>
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div class="mt-6 text-center">
+                        <button @click="showMore = !showMore" 
+                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            <span x-text="showMore ? 'Lihat Lebih Sedikit' : 'Lihat Selengkapnya'"></span>
+                            <svg class="w-4 h-4 ml-2 transition-transform duration-200" 
+                                 :class="showMore ? 'rotate-180' : ''" 
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Penilaian Produk Section -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Penilaian Produk</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Review Item 1 -->
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-1">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
+                        </div>
+                        <h3 class="font-semibold text-gray-900">user01</h3>
+                        <p class="text-gray-600 text-sm">Suspendisse sus tellus amet, et. Suspendiisse risus Proin sceleris augue risus, sed adipiscing est porta sit integer verenment enim non lacus akkurat.</p>
+                    </div>
+
+                    <!-- Review Item 2 -->
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-1">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
+                        </div>
+                        <h3 class="font-semibold text-gray-900">user01</h3>
+                        <p class="text-gray-600 text-sm">Suspendisse sus tellus amet, et. Suspendiisse risus Proin sceleris augue risus, sed adipiscing est porta sit integer verenment enim non lacus akkurat.</p>
+                    </div>
+
+                    <!-- Review Item 3 -->
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-1">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
+                        </div>
+                        <h3 class="font-semibold text-gray-900">user03</h3>
+                        <p class="text-gray-600 text-sm">Suspendisse sus tellus amet, et. Suspendiisse risus Proin sceleris augue risus, sed adipiscing est porta sit integer verenment enim non lacus akkurat.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori Serupa Section -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Kategori Serupa</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            @for($i = 1; $i <= 4; $i++)
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl overflow-hidden relative">
+                    <div class="w-full h-full flex items-center justify-center">
+                        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-3">
+                    <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        Produk {{ $i }}
+                    </h3>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="text-xl font-bold text-blue-600">
+                            Rp100.000
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        Lihat Produk
+                    </button>
+                </div>
+            </div>
+            @endfor
         </div>
     </div>
     
@@ -264,8 +435,7 @@
     @if($relatedProducts && $relatedProducts->count() > 0)
     <div class="container mx-auto px-4 py-12">
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Produk Terkait</h2>
-            <p class="text-gray-600">Produk lain yang mungkin Anda sukai</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Produk Lainnya</h2>
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -306,13 +476,10 @@
                         <div class="text-xl font-bold text-blue-600">
                             Rp {{ number_format($relatedProduct->sell_price, 0, ',', '.') }}
                         </div>
-                        <div class="text-sm text-gray-500">
-                            Stock: {{ $relatedProduct->stock }}
-                        </div>
                     </div>
                     
                     <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
-                        Tambah ke Keranjang
+                        Lihat Produk
                     </button>
                 </div>
             </div>
@@ -320,6 +487,45 @@
         </div>
     </div>
     @endif
+
+    
+    <!-- Section 4 Kolom Info dengan Icon -->
+    <div class="w-full bg-white border-t-4 border-blue-500 mt-12">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 py-8 px-4 text-center">
+            <div class="flex flex-col items-center">
+                <span class="mb-2">
+                    <!-- Shield Icon -->
+                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><path d="M12 3l7 4v5c0 5.25-3.5 9.74-7 10-3.5-.26-7-4.75-7-10V7l7-4z"/></svg>
+                </span>
+                <span class="font-semibold">Percayakan pada EXPERT-nya!</span>
+                <span class="text-gray-600 text-sm">Dikembangkan oleh Dokter Anak, Dokter Kulit, dan Psikolog Anak</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="mb-2">
+                    <!-- Truck Icon -->
+                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><rect x="1" y="7" width="15" height="13" rx="2"/><path d="M16 10h4l3 5v5a2 2 0 01-2 2H19"/><circle cx="5.5" cy="20.5" r="1.5"/><circle cx="18.5" cy="20.5" r="1.5"/></svg>
+                </span>
+                <span class="font-semibold">Gratis Ongkir</span>
+                <span class="text-gray-600 text-sm">Pengiriman Ekspres Seluruh Indonesia*</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="mb-2">
+                    <!-- Box Icon -->
+                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                </span>
+                <span class="font-semibold">Gratis Pengembalian</span>
+                <span class="text-gray-600 text-sm">Gratis Pengembalian Selama 7 Hari Kerja</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="mb-2">
+                    <!-- Chat Icon -->
+                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </span>
+                <span class="font-semibold">Hubungi Kami</span>
+                <span class="text-gray-600 text-sm">Whatsapp +62 821-3716-1033</span>
+            </div>
+        </div>
+    </div>
 
     @include('components.footer')
 </div>
@@ -333,17 +539,36 @@
 // Alpine.js data for product detail
 function productDetail() {
     return {
-        selectedImage: '{{ asset("/images/" . $product->image) }}',
+        selectedImageIndex: 0,
+        productImages: [
+            @if($product->image_url)
+                '{{ $product->image_url }}',
+                '{{ $product->image_url }}',
+                '{{ $product->image_url }}',
+                '{{ $product->image_url }}'
+            @else
+                '/images/placeholder.jpg',
+                '/images/placeholder.jpg',
+                '/images/placeholder.jpg',
+                '/images/placeholder.jpg'
+            @endif
+        ],
         quantity: 1,
+        isLiked: false,
         notification: {
             show: false,
             message: '',
             type: 'success'
         },
         
+        // Initialize component
+        init() {
+            console.log('Product detail initialized');
+        },
+        
         // Select image function
-        selectImage(imageUrl) {
-            this.selectedImage = imageUrl;
+        selectImage(index) {
+            this.selectedImageIndex = index;
         },
         
         // Add to cart function
@@ -356,7 +581,7 @@ function productDetail() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
-                        product_id: {{ $product->id }},
+                        product_id: {{ $product->item_id }},
                         quantity: this.quantity
                     })
                 });
@@ -393,7 +618,9 @@ function productDetail() {
         
         // Increase quantity
         increaseQuantity() {
-            this.quantity++;
+            if (this.quantity < {{ $product->stock }}) {
+                this.quantity++;
+            }
         },
         
         // Decrease quantity
