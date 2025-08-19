@@ -13,20 +13,37 @@
                 </div>
                 <div class="px-8 pb-8">
                     @if (session('success'))
-                        <div class="mb-4 text-green-600 text-sm font-semibold">{{ session('success') }}</div>
+                        <div class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                            {{ session('success') }}
+                        </div>
                     @endif
                     @if (session('error'))
-                        <div class="mb-4 text-red-600 text-sm font-semibold">{{ session('error') }}</div>
+                        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    @if ($errors->any())
+                        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                            <ul class="list-disc list-inside text-sm">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
                     <form method="POST" action="{{ route('register') }}" class="space-y-4" x-data="{ show: false, showConfirm: false }">
                         @csrf
                         <div class="space-y-2">
                             <label for="name" class="block text-sm font-medium">Nama Lengkap</label>
-                            <input id="name" name="name" type="text" class="w-full rounded border-gray-300 focus:ring-blue-500" placeholder="Masukkan nama lengkap" required autofocus>
+                            <input id="name" name="name" type="text" value="{{ old('name') }}" class="w-full rounded border-gray-300 focus:ring-blue-500" placeholder="Masukkan nama lengkap" required autofocus>
                         </div>
                         <div class="space-y-2">
                             <label for="email" class="block text-sm font-medium">Email</label>
-                            <input id="email" name="email" type="email" class="w-full rounded border-gray-300 focus:ring-blue-500" placeholder="nama@email.com" required>
+                            <input id="email" name="email" type="email" value="{{ old('email') }}" class="w-full rounded border-gray-300 focus:ring-blue-500" placeholder="nama@email.com" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label for="phone" class="block text-sm font-medium">No. Handphone (Opsional)</label>
+                            <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" class="w-full rounded border-gray-300 focus:ring-blue-500" placeholder="08123456789">
                         </div>
                         <div class="space-y-2">
                             <label for="password" class="block text-sm font-medium">Password</label>

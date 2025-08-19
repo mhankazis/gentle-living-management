@@ -12,14 +12,30 @@
                     <p class="text-gray-600 mb-4">Masuk ke akun EliteShop Anda</p>
                 </div>
                 <div class="px-8 pb-8">
+                    @if (session('success'))
+                        <div class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     @if (session('error'))
-                        <div class="mb-4 text-red-600 text-sm font-semibold">{{ session('error') }}</div>
+                        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    @if ($errors->any())
+                        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                            <ul class="list-disc list-inside text-sm">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
                     <form method="POST" action="{{ route('login') }}" class="space-y-4" x-data="{ show: false }">
                         @csrf
                         <div class="space-y-2">
                             <label for="email" class="block text-sm font-medium">Email</label>
-                            <input id="email" name="email" type="email" class="w-full rounded border-gray-300 focus:ring-blue-500" placeholder="nama@email.com" required autofocus>
+                            <input id="email" name="email" type="email" value="{{ old('email') }}" class="w-full rounded border-gray-300 focus:ring-blue-500" placeholder="nama@email.com" required autofocus>
                         </div>
                         <div class="space-y-2">
                             <label for="password" class="block text-sm font-medium">Password</label>
