@@ -8,174 +8,184 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Header Section -->
         <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-800 mb-2">Riwayat Pesanan</h1>
-            <p class="text-gray-600">Kelola pesanan dan lacak status pengiriman Anda</p>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Riwayat Transaksi</h1>
+            <p class="text-gray-600">Kelola transaksi dan lacak status pembayaran Anda</p>
         </div>
 
-    <!-- Filter Tabs -->
-    <div class="mb-6">
-        <div class="flex flex-wrap gap-2">
-            <button class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-300">Semua</button>
-            <button class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm">Belum Bayar</button>
-            <button class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm">Sedang Diproses</button>
-            <button class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm">Dikirim</button>
-            <button class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm">Selesai</button>
-            <button class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm">Dibatalkan</button>
-            <button class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm">Pengembalian Barang</button>
-        </div>
-    </div>
+        <!-- Filter Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <form method="GET" action="{{ route('history.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Status Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="">Semua Status</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Lunas</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                        <option value="refunded" {{ request('status') == 'refunded' ? 'selected' : '' }}>Refund</option>
+                    </select>
+                </div>
 
-    <!-- Search Bar -->
-    <div class="mb-6">
-        <div class="relative">
-            <input type="text" placeholder="Kamu bisa cari berdasarkan nama produk atau nomor pesanan" 
-                   class="w-full px-4 py-3 border border-gray-300 rounded-lg pl-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
-            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-        </div>
-    </div>
+                <!-- Date From -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dari Tanggal</label>
+                    <input type="date" name="date_from" value="{{ request('date_from') }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
 
-    <!-- Order History Card -->
-    <div class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
-        <div class="p-6">
-            <!-- Order Header -->
-            <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                    <!-- Product Image -->
-                    <div class="w-20 h-20 bg-gradient-to-br from-emerald-200 to-teal-300 rounded-lg flex-shrink-0 flex items-center justify-center">
-                        <svg class="h-8 w-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
+                <!-- Date To -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sampai Tanggal</label>
+                    <input type="date" name="date_to" value="{{ request('date_to') }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex items-end">
+                    <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-md hover:shadow-lg">
+                        Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Transaction List -->
+        @if($transactions->count() > 0)
+            @foreach($transactions as $transaction)
+                <div class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
+                    <div class="p-6">
+                        <!-- Transaction Header -->
+                        <div class="flex items-start justify-between mb-4 pb-4 border-b border-gray-200">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ $transaction->transaction_code }}</h3>
+                                <p class="text-gray-600 text-sm">{{ $transaction->transaction_date->format('d M Y, H:i') }}</p>
+                                <p class="text-gray-600 text-sm">Metode Pembayaran: {{ ucfirst($transaction->payment_method ?? 'Belum dipilih') }}</p>
+                            </div>
+                            
+                            <!-- Status Badge -->
+                            <div>
+                                @php
+                                    $statusColors = [
+                                        'pending' => 'bg-yellow-100 text-yellow-800',
+                                        'paid' => 'bg-green-100 text-green-800',
+                                        'cancelled' => 'bg-red-100 text-red-800',
+                                        'refunded' => 'bg-gray-100 text-gray-800'
+                                    ];
+                                    $statusTexts = [
+                                        'pending' => 'Pending',
+                                        'paid' => 'Lunas',
+                                        'cancelled' => 'Dibatalkan',
+                                        'refunded' => 'Refund'
+                                    ];
+                                @endphp
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $statusColors[$transaction->status] ?? 'bg-gray-100 text-gray-800' }}">
+                                    {{ $statusTexts[$transaction->status] ?? ucfirst($transaction->status) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Transaction Details -->
+                        <div class="space-y-3 mb-4">
+                            @foreach($transaction->details as $detail)
+                                <div class="flex items-center space-x-4">
+                                    <!-- Product Image -->
+                                    <div class="w-16 h-16 bg-gradient-to-br from-emerald-200 to-teal-300 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                        @if($detail->product && $detail->product->image)
+                                            <img src="{{ asset('images/' . $detail->product->image) }}" 
+                                                 alt="{{ $detail->product_name }}" 
+                                                 class="w-full h-full object-cover rounded-lg">
+                                        @else
+                                            <svg class="h-8 w-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                            </svg>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Product Info -->
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-gray-800">{{ $detail->product_name }}</h4>
+                                        <p class="text-gray-600 text-sm">Harga: Rp {{ number_format($detail->product_price, 0, ',', '.') }}</p>
+                                        <p class="text-gray-600 text-sm">Qty: {{ $detail->quantity }}</p>
+                                    </div>
+                                    
+                                    <!-- Subtotal -->
+                                    <div class="text-right">
+                                        <p class="font-semibold text-gray-800">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Transaction Summary -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="space-y-1">
+                                    @if($transaction->discount_amount > 0)
+                                        <p class="text-gray-600 text-sm">Subtotal: Rp {{ number_format($transaction->total_amount, 0, ',', '.') }}</p>
+                                        <p class="text-gray-600 text-sm">Diskon: -Rp {{ number_format($transaction->discount_amount, 0, ',', '.') }}</p>
+                                    @endif
+                                    @if($transaction->tax_amount > 0)
+                                        <p class="text-gray-600 text-sm">Pajak: Rp {{ number_format($transaction->tax_amount, 0, ',', '.') }}</p>
+                                    @endif
+                                    <p class="text-lg font-bold text-blue-600">Total: Rp {{ number_format($transaction->final_amount, 0, ',', '.') }}</p>
+                                </div>
+                                
+                                <div class="flex space-x-3">
+                                    <a href="{{ route('history.show', $transaction->id) }}" 
+                                       class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 shadow-md hover:shadow-lg">
+                                        Detail
+                                    </a>
+                                    
+                                    @if($transaction->status == 'pending')
+                                        <form action="{{ route('history.cancel', $transaction->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" 
+                                                    onclick="return confirm('Apakah Anda yakin ingin membatalkan transaksi ini?')"
+                                                    class="px-4 py-2 border border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors duration-300">
+                                                Batalkan
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            @if($transaction->notes)
+                                <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                                    <p class="text-gray-700 text-sm"><strong>Catatan:</strong> {{ $transaction->notes }}</p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    
-                    <!-- Product Info -->
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Gentle Baby Joy</h3>
-                        <p class="text-gray-600 text-sm mb-2">Variasi: Varian 1</p>
-                        <p class="text-gray-600 text-sm">x1</p>
-                    </div>
                 </div>
-                
-                <!-- Price -->
-                <div class="text-right">
-                    <p class="text-lg font-semibold text-gray-800">$189</p>
-                </div>
+            @endforeach
+
+            <!-- Pagination -->
+            <div class="mt-8">
+                {{ $transactions->appends(request()->query())->links() }}
             </div>
-
-            <!-- Order Status Info -->
-            <div class="flex items-center text-sm text-emerald-600 mb-4">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                <span>Pesanan telah tiba di alamat tujuan. Diterima oleh Yang Bersangkutan</span>
-            </div>
-
-            <!-- Order Total and Actions -->
-            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">Total Pesanan:</span>
-                    <span class="text-xl font-bold text-blue-600">$189</span>
+        @else
+            <!-- Empty State -->
+            <div class="text-center py-16">
+                <div class="mx-auto h-24 w-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-12 w-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
                 </div>
-                
-                <div class="flex space-x-3">
-                    <button class="px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-md hover:shadow-lg">
-                        Beli Lagi
-                    </button>
-                    <button class="px-6 py-2 border border-gray-300 text-gray-600 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-300">
-                        Atur Pengembalian
-                    </button>
-                    <button class="px-6 py-2 border border-gray-300 text-gray-600 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-300">
-                        Beri Penilaian
-                    </button>
-                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum ada riwayat transaksi</h3>
+                <p class="text-gray-600 mb-6">Anda belum memiliki transaksi apapun. Mulai berbelanja sekarang!</p>
+                <a href="{{ route('products.index') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-md hover:shadow-lg">
+                    Mulai Belanja
+                </a>
             </div>
-
-            <!-- Status Badge -->
-            <div class="mt-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                    Selesai
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Second Order Example -->
-    <div class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
-        <div class="p-6">
-            <!-- Order Header -->
-            <div class="flex items-start justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                    <!-- Product Image -->
-                    <div class="w-20 h-20 bg-gradient-to-br from-amber-200 to-orange-300 rounded-lg flex-shrink-0 flex items-center justify-center">
-                        <svg class="h-8 w-8 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-                        </svg>
-                    </div>
-                    
-                    <!-- Product Info -->
-                    <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Gentle Baby Imboost</h3>
-                        <p class="text-gray-600 text-sm mb-2">Variasi: Kemasan 100ml</p>
-                        <p class="text-gray-600 text-sm">x2</p>
-                    </div>
-                </div>
-                
-                <!-- Price -->
-                <div class="text-right">
-                    <p class="text-lg font-semibold text-gray-800">$89</p>
-                </div>
-            </div>
-
-            <!-- Order Status Info -->
-            <div class="flex items-center text-sm text-blue-600 mb-4">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>Pesanan sedang dalam perjalanan ke alamat tujuan</span>
-            </div>
-
-            <!-- Order Total and Actions -->
-            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">Total Pesanan:</span>
-                    <span class="text-xl font-bold text-blue-600">$89</span>
-                </div>
-                
-                <div class="flex space-x-3">
-                    <button class="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 shadow-md hover:shadow-lg">
-                        Lacak Pesanan
-                    </button>
-                    <button class="px-6 py-2 border border-gray-300 text-gray-600 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-300">
-                        Hubungi Penjual
-                    </button>
-                </div>
-                </div>
-            </div>
-
-            <!-- Status Badge -->
-            <div class="mt-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                    Dikirim
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Empty State (Hidden by default) -->
-    <div class="hidden text-center py-16">
-        <div class="mx-auto h-24 w-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mb-4">
-            <svg class="h-12 w-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum ada riwayat pesanan</h3>
-        <p class="text-gray-600 mb-6">Anda belum memiliki pesanan apapun. Mulai berbelanja sekarang!</p>
-        <a href="/products" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-medium hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-md hover:shadow-lg">
-            Mulai Belanja
-        </a>
-    </div>
-
+        @endif
     </div>
 
     @include('components.features')

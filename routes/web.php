@@ -25,6 +25,9 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
 Route::get('/categories/{id}', [ProductController::class, 'getByCategory'])->name('products.category');
 
+// Backward compatibility - alias for products route
+Route::redirect('/produk', '/products')->name('products');
+
 // Admin Routes - Hanya admin dan super_admin yang bisa akses
 Route::prefix('admin')->middleware(['auth', 'role:admin,super_admin'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\AdminOrderController::class, 'dashboard'])->name('admin.dashboard');
@@ -36,12 +39,21 @@ Route::prefix('admin')->middleware(['auth', 'role:admin,super_admin'])->group(fu
 });
 
 Route::get('/categories', function () {
-    return view('history');
+    return view('categories');
 });
 
-Route::get('/history', function () {
-    return view('history');
+// History Routes (Protected)
+Route::middleware('auth:master_users')->group(function () {
+    Route::get('/history', [App\Http\Controllers\HistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/{id}', [App\Http\Controllers\HistoryController::class, 'show'])->name('history.show');
+    Route::patch('/history/{id}/cancel', [App\Http\Controllers\HistoryController::class, 'cancel'])->name('history.cancel');
+});
+
+// Fallback untuk backward compatibility
+Route::get('/riwayat', function () {
+    return redirect()->route('history.index');
 })->name('history');
+
 Route::get('/about', function () {
     return view('about');
 });
