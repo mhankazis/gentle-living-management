@@ -3,335 +3,414 @@
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50" 
-    x-data="{
-        product: @json($product),
-        relatedProducts: @json($relatedProducts),
-        selectedVariant: 0,
-        currentImage: '',
-        quantity: 1,
-        isLiked: false,
-        
-        // Default variants if not set in database
-        defaultVariants: [
-            { name: 'Classic', image: 'bg-gradient-to-br from-slate-200 to-slate-300' },
-            { name: 'Premium', image: 'bg-gradient-to-br from-blue-200 to-blue-300' },
-            { name: 'Deluxe', image: 'bg-gradient-to-br from-purple-200 to-purple-300' },
-            { name: 'Special', image: 'bg-gradient-to-br from-green-200 to-green-300' }
-        ],
-        
-        init() {
-            // Add variants to product if not exist
-            if (!this.product.variants) {
-                this.product.variants = this.defaultVariants;
-            }
-            this.currentImage = this.product.image || 'bg-gradient-to-br from-slate-200 to-slate-300';
-        },
-        
-        selectVariant(index) {
-            this.selectedVariant = index;
-            if (this.product.variants && this.product.variants[index]) {
-                this.currentImage = this.product.variants[index].image;
-            }
-        },
-        
-        addToCart() {
-            const variantName = this.product.variants ? this.product.variants[this.selectedVariant].name : 'Default';
-            alert(`${this.quantity} ${this.product.name_item} (${variantName}) ditambahkan ke keranjang`);
-        },
-        
-        formatPrice(price) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(price);
-        }
-    }"
+    x-data="productDetail"
     x-init="init()"
 >
     @include('components.header')
-    <div class="container mx-auto px-4 py-8" x-show="product">
-        <!-- Breadcrumb -->
-        <nav class="mb-6">
-            <ol class="flex items-center space-x-2 text-sm text-gray-500">
-                <li><a href="/" class="hover:text-gray-700">Home</a></li>
-                <li>/</li>
-                <li><span x-text="product?.category?.category_name || 'Kategori'"></span></li>
-                <li>/</li>
-                <li><span class="text-gray-900 font-medium" x-text="product?.name_item || 'Produk'"></span></li>
+    
+    <!-- Breadcrumb -->
+    <div class="container mx-auto px-4 py-4">
+        <nav class="text-sm">
+            <ol class="flex items-center space-x-2 text-gray-500">
+                <li><a href="/" class="hover:text-blue-600 transition-colors">Beranda</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><a href="{{ route('products.index') }}" class="hover:text-blue-600 transition-colors">Produk</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                @if($product->category)
+                <li><a href="{{ route('products.category', $product->category_id) }}" class="hover:text-blue-600 transition-colors">{{ $product->category->category_name }}</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                @endif
+                <li><span class="text-gray-900 font-medium">{{ $product->name_item }}</span></li>
             </ol>
         </nav>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {{-- Product Image --}}
-            <div class="flex gap-4">
-                <!-- Main Product Image -->
-                <div class="flex-1">
-                    <div :class="`aspect-square ${currentImage || product.image} rounded-lg relative overflow-hidden`">
-                        <div class="w-full h-full flex items-center justify-center">
-                            <svg class="w-20 h-20 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Variants Thumbnails - Right side vertical -->
-                <div class="flex flex-col gap-3">
-                    <template x-for="(variant, index) in product.variants.slice(0, 3)" :key="index">
-                        <div :class="`aspect-square w-20 h-20 rounded-lg border-2 cursor-pointer transition-all duration-200 ${selectedVariant === index ? 'border-blue-500 ring-1 ring-blue-300' : 'border-gray-200 hover:border-gray-300'}`" 
-                             @click="selectVariant(index)"
-                             :title="variant.name">
-                            <div :class="`w-full h-full ${variant.image} rounded-lg flex items-center justify-center`">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
+    </div>
+    
+    <!-- Main Product Section -->
+    <div class="container mx-auto px-4 pb-8">
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+                <!-- Product Images -->
+                <div class="space-y-4">
+                    <!-- Main Image -->
+                    <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden relative group">
+                        @if($product->image_url)
+                            <img :src="productImages[selectedImageIndex]" 
+                                 alt="{{ $product->name_item }}" 
+                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                                <div class="text-center">
+                                    <svg class="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="text-gray-500 font-medium">{{ $product->name_item }}</p>
+                                </div>
                             </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-            {{-- Product Info --}}
-            <div class="space-y-6">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2" x-text="product.name_item"></h1>
-                    <div class="flex items-center space-x-4 mb-4">
-                        <div class="flex items-center">
-                            <template x-for="i in 5">
-                                <svg :key="i" class="h-5 w-5 text-yellow-400" fill="currentColor" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                            </template>
-                        </div>
-                        <span class="text-gray-600">(4.8 reviews)</span>
+                        @endif
+                        
+                        <!-- Like Button -->
+                        <button @click="isLiked = !isLiked" 
+                                class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg flex items-center justify-center transition-all duration-200 hover:bg-white"
+                                :class="isLiked ? 'text-red-500' : 'text-gray-400'">
+                            <svg class="w-5 h-5" :fill="isLiked ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </button>
                     </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-4xl font-bold text-teal-600" x-text="formatPrice(product.sell_price)"></span>
-                    <span class="text-sm px-2 py-1 bg-green-100 text-green-800 rounded-full" x-show="product.stock > 0">Stok: <span x-text="product.stock"></span></span>
-                </div>
-                <p class="text-gray-600 text-lg leading-relaxed" x-text="product.description_item || 'Produk berkualitas tinggi untuk kebutuhan Anda.'"></p>
-                
-                <!-- Variant Selector -->
-                <div x-show="product.variants">
-                    <span class="font-semibold text-lg">Varian: <span class="text-blue-600" x-text="product.variants[selectedVariant].name"></span></span>
-                    <div class="flex gap-2 mt-2 flex-wrap">
-                        <template x-for="(variant, index) in product.variants" :key="index">
-                            <button type="button" 
-                                class="px-4 py-2 rounded-lg border bg-white font-medium hover:bg-gray-50 transition-all duration-200" 
-                                :class="selectedVariant === index ? 'ring-2 ring-blue-500 border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300'" 
-                                @click="selectVariant(index)"
-                                x-text="variant.name">
+                    
+                    <!-- Thumbnail Images -->
+                    <div class="flex gap-3 overflow-x-auto pb-2">
+                        <template x-for="(image, index) in productImages.slice(0, 4)" :key="index">
+                            <button @click="selectImage(index)" 
+                                    class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200"
+                                    :class="selectedImageIndex === index ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-gray-300'">
+                                @if($product->image_url)
+                                    <img :src="image" alt="Product thumbnail" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                @endif
                             </button>
                         </template>
                     </div>
                 </div>
-                
-                <!-- Product Details -->
-                <div x-show="product.ingredient_item || product.contain_item || product.netweight_item">
-                    <h3 class="font-semibold text-lg mb-3">Detail Produk</h3>
-                    <ul class="space-y-2">
-                        <li x-show="product.ingredient_item" class="flex items-start space-x-2">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <div>
-                                <strong>Komposisi:</strong> <span x-text="product.ingredient_item"></span>
-                            </div>
-                        </li>
-                        <li x-show="product.contain_item" class="flex items-start space-x-2">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <div>
-                                <strong>Isi:</strong> <span x-text="product.contain_item"></span>
-                            </div>
-                        </li>
-                        <li x-show="product.netweight_item" class="flex items-start space-x-2">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <div>
-                                <strong>Berat:</strong> <span x-text="product.netweight_item"></span>
-                            </div>
-                        </li>
-                        <li x-show="product.unit_item" class="flex items-start space-x-2">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <div>
-                                <strong>Satuan:</strong> <span x-text="product.unit_item"></span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Quantity, Stock, and Add to Cart -->
-                <div class="space-y-4">
-                    <div class="flex items-center space-x-6">
-                        <div class="flex items-center space-x-3">
-                            <span class="font-medium text-gray-700">Kuantitas</span>
-                            <div class="flex items-center border border-gray-300 rounded-lg">
-                                <button type="button" class="h-10 w-10 flex items-center justify-center hover:bg-gray-50 transition-colors" @click="quantity = Math.max(1, quantity - 1)">
-                                    <svg class="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                </button>
-                                <input type="text" :value="quantity" class="w-16 h-10 text-center border-0 focus:ring-0 font-medium" readonly>
-                                <button type="button" class="h-10 w-10 flex items-center justify-center hover:bg-gray-50 transition-colors" @click="quantity = quantity + 1">
-                                    <svg class="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                </button>
+
+                <!-- Product Info -->
+                <div class="space-y-6">
+                    <!-- Title & Category -->
+                    <div>
+                        @if($product->category)
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                                {{ $product->category->category_name }}
+                            </span>
+                            <div class="flex items-center space-x-1">
+                                @for($i = 1; $i <= 5; $i++)
+                                <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                @endfor
+                                <span class="text-sm text-gray-500 ml-2">(4.8)</span>
                             </div>
                         </div>
-                        <div class="text-gray-600">
-                            <span class="font-medium">Stok</span> <span x-text="product.stockCount" class="font-semibold"></span>
+                        @endif
+                        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $product->name_item }}</h1>
+                    </div>
+
+                    <!-- Price & Stock -->
+                    <div class="flex items-center justify-between">
+                        <div class="space-y-1">
+                            <div class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                Rp {{ number_format($product->sell_price, 0, ',', '.') }}
+                            </div>
+                            @if($product->stock <= 10 && $product->stock > 0)
+                            <div class="text-sm text-amber-600 font-medium">⚠️ Stok hampir habis!</div>
+                            @endif
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500">Stok tersedia</div>
+                            <div class="text-2xl font-bold {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600' }}">
+                                {{ $product->stock > 0 ? $product->stock : 'Habis' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-semibold text-gray-900">Deskripsi Produk</h3>
+                        <div class="prose prose-sm max-w-none">
+                            <p class="text-gray-600 leading-relaxed">
+                                {{ $product->description_item ?: 'Produk berkualitas tinggi untuk memenuhi kebutuhan Anda. Dibuat dengan bahan terbaik dan standar kualitas tinggi.' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Product Details -->
+                    @if($product->ingredient_item || $product->contain_item || $product->netweight_item || $product->unit_item)
+                    <div class="bg-gray-50 rounded-xl p-6 space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Detail Produk
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @if($product->ingredient_item)
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <span class="font-medium text-gray-900">Komposisi:</span>
+                                    <p class="text-gray-600">{{ $product->ingredient_item }}</p>
+                                </div>
+                            </div>
+                            @endif
+                            @if($product->contain_item)
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <span class="font-medium text-gray-900">Isi:</span>
+                                    <p class="text-gray-600">{{ $product->contain_item }}</p>
+                                </div>
+                            </div>
+                            @endif
+                            @if($product->netweight_item)
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <span class="font-medium text-gray-900">Berat:</span>
+                                    <p class="text-gray-600">{{ $product->netweight_item }}</p>
+                                </div>
+                            </div>
+                            @endif
+                            @if($product->unit_item)
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <span class="font-medium text-gray-900">Satuan:</span>
+                                    <p class="text-gray-600">{{ $product->unit_item }}</p>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Quantity & Add to Cart -->
+                    <div class="space-y-4 pt-6 border-t border-gray-200">
+                        <!-- Quantity Selector -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <span class="font-medium text-gray-900">Kuantitas:</span>
+                                <div class="flex items-center border border-gray-300 rounded-lg bg-white">
+                                    <button type="button" 
+                                            @click="quantity = Math.max(1, quantity - 1)" 
+                                            class="w-10 h-10 flex items-center justify-center hover:bg-gray-50 transition-colors rounded-l-lg">
+                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                        </svg>
+                                    </button>
+                                    <div class="w-16 h-10 flex items-center justify-center border-l border-r border-gray-300">
+                                        <span class="font-medium" x-text="quantity"></span>
+                                    </div>
+                                    <button type="button" 
+                                            @click="quantity = Math.min({{ $product->stock }}, quantity + 1)" 
+                                            class="w-10 h-10 flex items-center justify-center hover:bg-gray-50 transition-colors rounded-r-lg"
+                                            :disabled="quantity >= {{ $product->stock }}">
+                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                Max: {{ $product->stock }} unit
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        @if($product->stock > 0)
+                        <div class="flex space-x-3">
+                            <button type="button"
+                                    @click="addToCart"
+                                    class="flex-1 flex items-center justify-center px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 transform hover:scale-105">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5-5M7 13l-2.5 5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                                Tambah ke Keranjang
+                            </button>
+                            <button type="button" 
+                                    class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                                Beli Sekarang
+                            </button>
+                        </div>
+                        @else
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+                            <p class="text-red-600 font-medium">⚠️ Produk sedang tidak tersedia</p>
+                            <p class="text-red-500 text-sm mt-1">Stok akan segera diperbarui</p>
+                        </div>
+                        @endif
+
+                        <!-- Additional Info -->
+                        <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100 text-center">
+                            <div class="flex flex-col items-center space-y-1">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span class="text-xs text-gray-600">Kualitas Terjamin</span>
+                            </div>
+                            <div class="flex flex-col items-center space-y-1">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                                <span class="text-xs text-gray-600">Pengiriman Cepat</span>
+                            </div>
+                            <div class="flex flex-col items-center space-y-1">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                <span class="text-xs text-gray-600">Garansi Puas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products Section -->
+    @if($relatedProducts && $relatedProducts->count() > 0)
+    <div class="container mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Produk Terkait</h2>
+            <p class="text-gray-600">Produk lain yang mungkin Anda sukai</p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach($relatedProducts as $relatedProduct)
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+                <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl overflow-hidden relative">
+                    @if($relatedProduct->image_url)
+                        <img src="{{ $relatedProduct->image_url }}" alt="{{ $relatedProduct->name_item }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center">
+                            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    @endif
+                    
+                    <!-- Quick View Button -->
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                        <a href="{{ route('product.detail', $relatedProduct->item_id) }}" 
+                           class="opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg font-medium text-gray-900 hover:bg-white transition-all duration-200">
+                            Lihat Detail
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-3">
+                    @if($relatedProduct->category)
+                    <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                        {{ $relatedProduct->category->category_name }}
+                    </span>
+                    @endif
+                    
+                    <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        {{ $relatedProduct->name_item }}
+                    </h3>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="text-xl font-bold text-blue-600">
+                            Rp {{ number_format($relatedProduct->sell_price, 0, ',', '.') }}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Stock: {{ $relatedProduct->stock }}
                         </div>
                     </div>
                     
-                    <div class="flex space-x-3">
-                        <button 
-                            type="button"
-                            @click="addToCart"
-                            class="flex items-center justify-center px-6 py-3 border border-teal-500 text-teal-600 rounded-lg font-medium hover:bg-teal-50 transition-colors"
-                        >
-                            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5-5M7 13l-2.5 5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
-                            </svg>
-                            Masukkan Keranjang
-                        </button>
-                        <button 
-                            type="button" 
-                            class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
-                        >
-                            Beli Sekarang
-                        </button>
-                    </div>
+                    <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        Tambah ke Keranjang
+                    </button>
                 </div>
             </div>
+            @endforeach
         </div>
     </div>
-    
-    <!-- Tentang Produk dengan fitur Load More -->
-    <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow" x-show="product"
-        x-data="{
-            fullText: `Gentle Baby Oil New Size LAUNCHING!!!<br>Gentle Baby Oil 10ml - Baby Essential Oil - Minyak Pijat Bayi Aromaterapi Minyak Urut Bayi - Baby Massage Oil<br>Gentle Baby Oil adalah Minyak Bayi Aromaterapi, kombinasi Essential Oil dan Sunflower Seed Oil untuk kesehatan ibu, bayi dan balita.<br><span class='text-green-600 font-semibold'>✔ Bahan Alami, AMAN untuk BAYI mulai usia 0-4th</span><br><span class='text-green-600 font-semibold'>✔ MINYAK PIJAT BAYI BALITA</span><br><span class='text-green-600 font-semibold'>✔ FREE kemasan bubble wrap+kartus</span><br><span class='text-green-600 font-semibold'>✔ FREE Konsultasi seputar kesehatan bayi/balita dan ibu menyusui</span><br><br><span class='font-semibold'>VARIAN TERSEDIA:</span><br>1. COUGH N FLU : Meredakan flu pada bayi balita<br>2. DEEP SLEEP : Meningkatkan kualitas tidur bayi balita<br>3. GIMME FOOD : Melancarkan pencernaan & Menambah nafsu makan si kecil<br>4. TUMMY CALMER : Meredakan masalah perut bayi balita (kolik, sembelit, kembung, dll)<br>5. JOY : Menenangkan dan mood si kecil<br>6. IMMBOOST : Meningkatkan daya tahan tubuh si kecil<br>7. MASSAGE BOOST : Bayi & Media pijat<br>8. LDR BOOSTER : Merilekskan & memperlancar produksi ASI (khusus ibu)<br>9. BITE BUDS : Melindungi kulit dr gigitan nyamuk & meredakan gatal akibat gigitan serangga<br><br>- USIA : 0 - 4 tahun<br>- KEMASAN: Pump bottle, botol kaca, dikemas dalam kardus<br>- MASA KADALUARSA: 12 Bulan<br><span class='font-semibold'>NOTE:</span><br>- Orderan sebelum pukul 14.00 akan dikirim pada hari yg sama<br>- Hari Minggu dan tanggal merah toko tutup dan tidak ada pengiriman<br>- Khusus pesanan yang menggunakan ekspedisi instan (gosend/grabexpress), jika masuk lebih dari pukul 14.00 maka akan dikirim di hari berikutnya.<br>No. UMOT (Kemenkes RI): 443/04/UMOT/35.07.103/2020<br>No CPOTB BPOM RI : B-ST.04.03.4318.07.21.02.904`,
-            showAll: false,
-            maxLength: 400,
-        }"
-    >
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Tentang Produk</h2>
-        <div class="text-gray-700 space-y-2">
-            <template x-if="!showAll">
-                <div x-html="fullText.length > maxLength ? fullText.substring(0, maxLength) + '...' : fullText"></div>
-            </template>
-            <template x-if="showAll">
-                <div x-html="fullText"></div>
-            </template>
-            <template x-if="fullText.length > maxLength">
-                <button @click="showAll = !showAll" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    <span x-text="showAll ? 'Tampilkan Lebih Sedikit' : 'Lihat Selengkapnya'"></span>
-                </button>
-            </template>
-        </div>
-    </div>
-    
-    <!-- Penilaian Produk -->
-    <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Penilaian Produk</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="border rounded-lg p-6 flex flex-col items-start">
-                <span class="font-semibold mb-2">user01</span>
-                <div class="flex mb-2">
-                    <template x-for="i in 5">
-                        <svg :key="i" class="h-5 w-5 text-yellow-400" fill="currentColor" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    </template>
-                </div>
-                <p class="text-gray-700 text-sm">Suspendisse quis lacinia urna. Suspendisse potenti. Proin tristique augue risus, sed pharetra mi porta id. Integer venenatis ipsum nec lacus dictum.</p>
-            </div>
-            <div class="border rounded-lg p-6 flex flex-col items-start">
-                <span class="font-semibold mb-2">user01</span>
-                <div class="flex mb-2">
-                    <template x-for="i in 5">
-                        <svg :key="i" class="h-5 w-5 text-yellow-400" fill="currentColor" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    </template>
-                </div>
-                <p class="text-gray-700 text-sm">Suspendisse quis lacinia urna. Suspendisse potenti. Proin tristique augue risus, sed pharetra mi porta id. Integer venenatis ipsum nec lacus dictum.</p>
-            </div>
-            <div class="border rounded-lg p-6 flex flex-col items-start">
-                <span class="font-semibold mb-2">user01</span>
-                <div class="flex mb-2">
-                    <template x-for="i in 5">
-                        <svg :key="i" class="h-5 w-5 text-yellow-400" fill="currentColor" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    </template>
-                </div>
-                <p class="text-gray-700 text-sm">Suspendisse quis lacinia urna. Suspendisse potenti. Proin tristique augue risus, sed pharetra mi porta id. Integer venenatis ipsum nec lacus dictum.</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Kategori Serupa -->
-    <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow">
-        <h2 class="text-xl font-bold text-gray-900 mb-4 text-center">Produk Serupa</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <template x-for="item in relatedProducts">
-                <div class="border rounded-lg p-4 flex flex-col items-center">
-                    <div class="w-full aspect-[4/3] bg-gray-200 rounded mb-4 flex items-center justify-center">
-                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <div class="font-semibold mb-1 text-center" x-text="item.name_item"></div>
-                    <div class="text-blue-700 font-bold mb-2" x-text="formatPrice(item.sell_price)"></div>
-                    <a :href="`/products/${item.item_id}`" class="w-full py-2 rounded bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:from-blue-700 hover:to-purple-700 text-center">Lihat Produk</a>
-                </div>
-            </template>
-        </div>
-    </div>
-        </div>
-    </div>
-    
-    <!-- Produk Lainnya -->
-    <div class="container mx-auto px-4 py-8 mt-8 bg-white rounded-lg shadow">
-        <h2 class="text-xl font-bold text-gray-900 mb-4 text-center">Produk Lainnya</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <template x-for="item in allProducts.slice(2,6)">
-                <div class="border rounded-lg p-4 flex flex-col items-center">
-                    <div class="w-full aspect-[4/3] bg-gray-200 rounded mb-4"></div>
-                    <div class="font-semibold mb-1" x-text="item.name"></div>
-                    <div class="text-blue-700 font-bold mb-2" x-text="`Rp${(item.price * 1000).toLocaleString('id-ID')}`"></div>
-                    <button class="w-full py-2 rounded bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:from-blue-700 hover:to-purple-700">Lihat Produk</button>
-                </div>
-            </template>
-        </div>
-    </div>
-    <div x-show="!product" class="container mx-auto px-4 py-16 text-center">
-        <h1 class="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
-        <a href="/products" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">Back to Products</a>
-    </div>
+    @endif
 
-    <!-- Section 4 Kolom Info dengan Icon -->
-    <div class="w-full bg-white border-t-4 border-blue-500 mt-12">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 py-8 px-4 text-center">
-            <div class="flex flex-col items-center">
-                <span class="mb-2">
-                    <!-- Shield Icon -->
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><path d="M12 3l7 4v5c0 5.25-3.5 9.74-7 10-3.5-.26-7-4.75-7-10V7l7-4z"/></svg>
-                </span>
-                <span class="font-semibold">Percayakan pada EXPERT-nya!</span>
-                <span class="text-gray-600 text-sm">Dikembangkan oleh Dokter Anak, Dokter Kulit, dan Psikolog Anak</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="mb-2">
-                    <!-- Truck Icon -->
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><rect x="1" y="7" width="15" height="13" rx="2"/><path d="M16 10h4l3 5v5a2 2 0 01-2 2H19"/><circle cx="5.5" cy="20.5" r="1.5"/><circle cx="18.5" cy="20.5" r="1.5"/></svg>
-                </span>
-                <span class="font-semibold">Gratis Ongkir</span>
-                <span class="text-gray-600 text-sm">Pengiriman Ekspres Seluruh Indonesia*</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="mb-2">
-                    <!-- Box Icon -->
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-                </span>
-                <span class="font-semibold">Gratis Pengembalian</span>
-                <span class="text-gray-600 text-sm">Gratis Pengembalian Selama 7 Hari Kerja</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="mb-2">
-                    <!-- Chat Icon -->
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-blue-600"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                </span>
-                <span class="font-semibold">Hubungi Kami</span>
-                <span class="text-gray-600 text-sm">Whatsapp +62 821-3716-1033</span>
-            </div>
-        </div>
-    </div>
     @include('components.footer')
 </div>
+
+<!-- CSRF Token for AJAX requests -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 @endsection
+
+<script>
+// Alpine.js data for product detail
+function productDetail() {
+    return {
+        selectedImage: '{{ asset("/images/" . $product->image) }}',
+        quantity: 1,
+        notification: {
+            show: false,
+            message: '',
+            type: 'success'
+        },
+        
+        // Select image function
+        selectImage(imageUrl) {
+            this.selectedImage = imageUrl;
+        },
+        
+        // Add to cart function
+        async addToCart() {
+            try {
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        product_id: {{ $product->id }},
+                        quantity: this.quantity
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.showNotification('Produk berhasil ditambahkan ke keranjang!', 'success');
+                    
+                    // Update cart count if element exists
+                    const cartCount = document.querySelector('[data-cart-count]');
+                    if (cartCount) {
+                        cartCount.textContent = data.cartCount || '';
+                    }
+                } else {
+                    this.showNotification(data.message || 'Gagal menambahkan ke keranjang', 'error');
+                }
+            } catch (error) {
+                this.showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
+                console.error('Error:', error);
+            }
+        },
+        
+        // Show notification function
+        showNotification(message, type = 'success') {
+            this.notification.message = message;
+            this.notification.type = type;
+            this.notification.show = true;
+            
+            setTimeout(() => {
+                this.notification.show = false;
+            }, 3000);
+        },
+        
+        // Increase quantity
+        increaseQuantity() {
+            this.quantity++;
+        },
+        
+        // Decrease quantity
+        decreaseQuantity() {
+            if (this.quantity > 1) {
+                this.quantity--;
+            }
+        }
+    }
+}
+</script>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
