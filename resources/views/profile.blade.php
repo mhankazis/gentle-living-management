@@ -20,11 +20,11 @@
                         <div class="px-8 pb-8 space-y-6" x-data="profileForm()">
                             <div class="flex items-center space-x-4">
                                 <div class="h-20 w-20 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
-                                    {{ strtoupper(substr($userEmail,0,2)) }}
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-semibold text-gray-900" x-text="form.name">John Doe</h3>
-                                    <p class="text-gray-600">{{ $userEmail }}</p>
+                                    <h3 class="text-xl font-semibold text-gray-900">{{ auth()->user()->name }}</h3>
+                                    <p class="text-gray-600">{{ auth()->user()->email }}</p>
                                     <span class="inline-block mt-1 bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full">Member Premium</span>
                                 </div>
                             </div>
@@ -134,11 +134,11 @@ function profileForm() {
     return {
         edit: false,
         form: {
-            name: 'John Doe',
-            email: @json($userEmail ?? 'johndoe@email.com'),
-            phone: '+62 812 3456 7890',
+            name: @json(auth()->user()->name),
+            email: @json(auth()->user()->email),
+            phone: @json(auth()->user()->phone ?? '+62 812 3456 7890'),
             address: 'Jl. Sudirman No. 123, Jakarta',
-            joinDate: 'Januari 2024',
+            joinDate: @json(auth()->user()->created_at->format('F Y')),
         },
     }
 }

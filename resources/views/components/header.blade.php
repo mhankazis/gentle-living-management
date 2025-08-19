@@ -1,6 +1,4 @@
 @php
-$isLoggedIn = session('isLoggedIn', false) || Auth::check();
-$userEmail = session('userEmail', Auth::user()->email ?? '');
 $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ada
 @endphp
 <!-- Header ala EliteShop sebagai komponen Blade -->
@@ -27,19 +25,23 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     </button>
                 </div>
-                @if ($isLoggedIn)
+                @auth
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded hover:bg-gray-100">
                         <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
-                        <span class="hidden md:block text-sm font-medium">{{ explode('@', $userEmail)[0] }}</span>
+                        <span class="hidden md:block text-sm font-medium">{{ auth()->user()->name }}</span>
                     </button>
                     <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-56 bg-white border shadow-lg rounded z-50">
-                        <a href="/profile" class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100">
+                        <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M9 9h6v6H9z"/></svg>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="{{ route('profile') }}" class="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
                             <span>Profil Saya</span>
                         </a>
                         <div class="border-t my-1"></div>
-                        <form method="POST" action="/logout">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="flex items-center space-x-2 px-4 py-2 w-full text-left text-red-600 hover:bg-gray-100">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -49,13 +51,13 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
                     </div>
                 </div>
                 @else
-                <a href="/login">
+                <a href="{{ route('login') }}">
                     <button class="flex items-center px-3 py-2 rounded hover:bg-gray-100">
                         <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a7.5 7.5 0 0 1 13 0"/></svg>
                         <span class="hidden md:block ml-2">Login</span>
                     </button>
                 </a>
-                @endif
+                @endauth
                 <a href="/cart">
                     <button class="relative px-3 py-2 rounded hover:bg-gray-100">
                         <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"/></svg>

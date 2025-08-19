@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,6 +50,7 @@ Route::prefix('admin')->group(function () {
 Route::get('/categories', function () {
     return view('history');
 });
+
 Route::get('/history', function () {
     return view('history');
 })->name('history');
@@ -56,42 +58,24 @@ Route::get('/about', function () {
     return view('about');
 });
 
-// LOGIN GET
-Route::get('/login', function () {
-    // Cek session benar-benar ada dan true
-    if (session('isLoggedIn') === true) {
-        return redirect('/profile');
-    }
-    return view('login');
-})->name('login');
+// Authentication Routes
+Route::get('/login', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
+Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-// LOGIN POST
-Route::post('/login', function (\Illuminate\Http\Request $request) {
-    $email = $request->input('email');
-    $password = $request->input('password');
-    // Validasi sederhana, bisa diganti autentikasi sebenarnya
-    if ($email && $password) {
-        session(['isLoggedIn' => true, 'userEmail' => $email]);
-        return redirect('/'); // Redirect ke home setelah login
-    } else {
-        return redirect('/login')->with('error', 'Email dan password harus diisi');
-    }
-});
+Route::get('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
 
-// LOGOUT
-Route::post('/logout', function () {
-    session()->forget(['isLoggedIn', 'userEmail']);
-    return redirect('/login');
-})->name('logout');
-
-// PROFILE
-Route::get('/profile', function () {
-    // Cek session benar-benar ada dan true
-    if (session('isLoggedIn') !== true) {
-        return redirect('/login');
-    }
-    $userEmail = session('userEmail', '');
-    return view('profile', ['userEmail' => $userEmail]);
+// Protected Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', function () {
+        $user = Auth::user();
+        return view('profile', ['user' => $user]);
+    })->name('profile');
+    
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 });
 
 // Route bawaan Laravel untuk profile (edit, update, destroy) dihapus agar tidak bentrok dengan route custom
@@ -101,32 +85,8 @@ Route::get('/profile', function () {
 //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
 
-// REGISTER GET
-Route::get('/register', function () {
-    if (session('isLoggedIn')) {
-        return redirect('/profile');
-    }
-    return view('register');
-})->name('register');
-
-// REGISTER POST
-Route::post('/register', function (\Illuminate\Http\Request $request) {
-    $name = $request->input('name');
-    $email = $request->input('email');
-    $password = $request->input('password');
-    $confirm = $request->input('confirm_password');
-    if (!$name || !$email || !$password || !$confirm) {
-        return redirect('/register')->with('error', 'Semua field harus diisi');
-    }
-    if ($password !== $confirm) {
-        return redirect('/register')->with('error', 'Password dan konfirmasi password tidak sama');
-    }
-    if (strlen($password) < 6) {
-        return redirect('/register')->with('error', 'Password minimal 6 karakter');
-    }
-    // Simulasi sukses (bisa disimpan ke DB jika perlu)
-    return redirect('/login')->with('success', 'Akun Anda telah berhasil dibuat. Silakan login.');
-});
+// Route register yang lama (simulasi) dihapus karena sudah ada yang benar di atas
+// yang menggunakan RegisteredUserController
 
 // Hapus atau nonaktifkan Auth::routes() atau route login bawaan Laravel
 // Auth::routes(); // Dihapus jika ada
