@@ -137,3 +137,45 @@ class AdminOrderController extends Controller
         return back()->with('success', 'Permintaan pembatalan telah ditolak');
     }
 }
+    {
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,processing,shipped,delivered,cancelled'
+        ]);
+
+        $order = Order::findOrFail($orderId);
+        $oldStatus = $order->status;
+        $order->status = $request->status;
+        $order->save();
+
+        return redirect()->back()->with('success', "Status order berhasil diubah dari '$oldStatus' ke '{$request->status}'");
+    }
+
+    /**
+     * Approve cancellation request (admin privilege)
+     */
+    public function approveCancellation($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        
+        // Only allow cancellation if not shipped yet
+        if (in_array($order->status, ['shipped', 'delivered'])) {
+            return redirect()->back()->with('error', 'Order yang sudah dikirim tidak dapat dibatalkan.');
+        }
+
+        $order->status = 'cancelled';
+        $order->save();
+
+        return redirect()->back()->with('success', 'Pembatalan order telah disetujui.');
+    }
+
+    /**
+     * Reject cancellation request (admin privilege)
+     */
+    public function rejectCancellation($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        
+        // Reset cancellation request (you might want to add a separate field for this)
+        return redirect()->back()->with('success', 'Pembatalan order telah ditolak.');
+    }
+}

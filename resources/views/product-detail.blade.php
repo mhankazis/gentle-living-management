@@ -356,7 +356,7 @@ function productDetail() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
-                        product_id: {{ $product->id }},
+                        item_id: {{ $product->item_id }},
                         quantity: this.quantity
                     })
                 });
@@ -366,10 +366,11 @@ function productDetail() {
                 if (data.success) {
                     this.showNotification('Produk berhasil ditambahkan ke keranjang!', 'success');
                     
-                    // Update cart count if element exists
-                    const cartCount = document.querySelector('[data-cart-count]');
-                    if (cartCount) {
-                        cartCount.textContent = data.cartCount || '';
+                    // Update cart count using global cart counter
+                    if (window.CartCounter && data.cart_count !== undefined) {
+                        window.CartCounter.updateCount(data.cart_count);
+                    } else if (window.triggerCartUpdate) {
+                        window.triggerCartUpdate();
                     }
                 } else {
                     this.showNotification(data.message || 'Gagal menambahkan ke keranjang', 'error');

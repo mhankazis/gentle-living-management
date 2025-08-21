@@ -1,5 +1,15 @@
 @php
-$cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ada
+use App\Models\Cart;
+use Illuminate\Support\Facades\Auth;
+
+// Get actual cart count based on user authentication
+if (Auth::guard('master_users')->check()) {
+    $user = Auth::guard('master_users')->user();
+    $sessionId = 'user_' . $user->user_id;
+} else {
+    $sessionId = session()->getId();
+}
+$cartItemsCount = Cart::getTotalItems($sessionId);
 @endphp
 <!-- Header ala EliteShop sebagai komponen Blade -->
 <header class="bg-white shadow-lg sticky top-0 z-50">
@@ -71,7 +81,9 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
                     <button class="relative px-3 py-2 rounded hover:bg-gray-100">
                         <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"/></svg>
                         @if ($cartItemsCount > 0)
-                        <span class="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white rounded-full">{{ $cartItemsCount }}</span>
+                        <span data-cart-count class="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white rounded-full">{{ $cartItemsCount }}</span>
+                        @else
+                        <span data-cart-count class="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white rounded-full hidden"></span>
                         @endif
                     </button>
                 </a>
@@ -91,3 +103,69 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
         </div>
     </div>
 </header>
+
+<!-- Cart Counter Script -->
+<script>
+// Global cart counter management
+window.CartCounter = {
+    // Update cart count in header
+    updateCount: function(count) {
+        const cartBadge = document.querySelector('[data-cart-count]');
+        if (cartBadge) {
+            if (count > 0) {
+                cartBadge.textContent = count;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+        }
+    },
+
+    // Fetch current cart count from server
+    refreshCount: function() {
+        fetch('/cart/count', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.updateCount(data.count || 0);
+        })
+        .catch(error => {
+            console.error('Error fetching cart count:', error);
+        });
+    },
+
+    // Initialize cart counter on page load
+    init: function() {
+        // Refresh count when page loads
+        this.refreshCount();
+        
+        // Listen for custom cart update events
+        document.addEventListener('cartUpdated', (event) => {
+            if (event.detail && event.detail.count !== undefined) {
+                this.updateCount(event.detail.count);
+            } else {
+                this.refreshCount();
+            }
+        });
+    }
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    window.CartCounter.init();
+});
+
+// Helper function to trigger cart update event
+window.triggerCartUpdate = function(count = null) {
+    const event = new CustomEvent('cartUpdated', {
+        detail: { count: count }
+    });
+    document.dispatchEvent(event);
+};
+</script>

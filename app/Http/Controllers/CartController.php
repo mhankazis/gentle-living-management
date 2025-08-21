@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\MasterItem;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
     public function index()
     {
-        $sessionId = session()->getId();
+        $user = Auth::guard('master_users')->user();
+        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+        
         $cartItems = Cart::getCartItems($sessionId);
         $total = Cart::getTotalAmount($sessionId);
         $itemCount = Cart::getTotalItems($sessionId);
@@ -26,7 +29,8 @@ class CartController extends Controller
         ]);
         
         $item = MasterItem::findOrFail($request->item_id);
-        $sessionId = session()->getId();
+        $user = Auth::guard('master_users')->user();
+        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
         
         // Check if item already in cart
         $cartItem = Cart::where('session_id', $sessionId)
@@ -63,7 +67,9 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1'
         ]);
         
-        $sessionId = session()->getId();
+        $user = Auth::guard('master_users')->user();
+        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+        
         $cartItem = Cart::where('cart_id', $cartId)
                        ->where('session_id', $sessionId)
                        ->firstOrFail();
@@ -74,7 +80,7 @@ class CartController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'Keranjang berhasil diupdate',
+            'message' => 'Kuantitas berhasil diupdate',
             'subtotal' => number_format($cartItem->subtotal, 0, ',', '.'),
             'total' => number_format(Cart::getTotalAmount($sessionId), 0, ',', '.')
         ]);
@@ -82,7 +88,9 @@ class CartController extends Controller
     
     public function remove($cartId)
     {
-        $sessionId = session()->getId();
+        $user = Auth::guard('master_users')->user();
+        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+        
         $cartItem = Cart::where('cart_id', $cartId)
                        ->where('session_id', $sessionId)
                        ->firstOrFail();
@@ -91,15 +99,15 @@ class CartController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'Produk berhasil dihapus dari keranjang',
-            'cart_count' => Cart::getTotalItems($sessionId),
-            'total' => number_format(Cart::getTotalAmount($sessionId), 0, ',', '.')
+            'message' => 'Produk berhasil dihapus dari keranjang'
         ]);
     }
     
     public function clear()
     {
-        $sessionId = session()->getId();
+        $user = Auth::guard('master_users')->user();
+        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+        
         Cart::where('session_id', $sessionId)->delete();
         
         return response()->json([
@@ -110,7 +118,9 @@ class CartController extends Controller
     
     public function count()
     {
-        $sessionId = session()->getId();
+        $user = Auth::guard('master_users')->user();
+        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+        
         return response()->json([
             'count' => Cart::getTotalItems($sessionId)
         ]);

@@ -67,23 +67,15 @@ Route::get('/register', [App\Http\Controllers\Auth\RegisteredUserController::cla
 Route::post('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
 
 // Protected Routes - Semua authenticated users
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:master_users')->group(function () {
     Route::get('/profile', function () {
-        $user = Auth::user();
+        $user = Auth::guard('master_users')->user();
         return view('profile', ['user' => $user]);
     })->name('profile');
     
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-    
-    // User Order Management Routes - Hanya user yang bisa akses
-    Route::middleware('role:user')->group(function () {
-        Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
-        Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-        Route::get('/orders/{orderId}/success', [OrderController::class, 'success'])->name('orders.success');
-        Route::post('/orders/{orderId}/cancel', [OrderController::class, 'cancelRequest'])->name('orders.cancel');
-    });
     
     // Cart Routes - Semua authenticated users bisa akses cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -92,6 +84,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{cartId}/remove', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
+    
+    // User Order Management Routes - Checkout accessible to all authenticated users
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{orderId}/success', [OrderController::class, 'success'])->name('orders.success');
+    Route::post('/orders/{orderId}/cancel', [OrderController::class, 'cancelRequest'])->name('orders.cancel');
 });
 
 // Route bawaan Laravel untuk profile (edit, update, destroy) dihapus agar tidak bentrok dengan route custom

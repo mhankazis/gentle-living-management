@@ -1,66 +1,92 @@
+<!-- Cart Summary Section -->
 @php
-$subtotal = 827;
-$shipping = 0;
-$tax = 82.70;
-$total = $subtotal + $shipping + $tax;
+$items = [
+  ['name' => 'Gentle Oil Cough n Flu', 'price' => 299000, 'quantity' => 1],
+  ['name' => 'Gentle Baby Deep Sleep', 'price' => 249000, 'quantity' => 2],
+  ['name' => 'Gentle Baby Bye Bugs', 'price' => 149000, 'quantity' => 1],
+];
+
+$subtotal = array_sum(array_map(function($item) {
+    return $item['price'] * $item['quantity'];
+}, $items));
+
+$tax = $subtotal * 0.11; // 11% PPN
+$shipping = 25000; // Ongkir flat
+$total = $subtotal + $tax + $shipping;
 @endphp
-<div class="space-y-6">
-  <div class="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow">
-    <div class="p-6 pb-0">
-      <h2 class="text-xl font-bold mb-4">Order Summary</h2>
-      <div class="space-y-4">
-        <div class="flex justify-between">
-          <span class="text-gray-600">Subtotal</span>
-          <span class="font-semibold">${{ $subtotal }}</span>
+
+<div class="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg p-6 shadow-md">
+    <h2 class="text-xl font-bold text-gray-800 mb-6">Ringkasan Pesanan</h2>
+    
+    <!-- Order Items -->
+    <div class="space-y-3 mb-6">
+        @foreach ($items as $item)
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600">{{ $item['name'] }} x{{ $item['quantity'] }}</span>
+                <span class="font-medium text-gray-800">Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</span>
+            </div>
+        @endforeach
+    </div>
+    
+    <!-- Summary Calculations -->
+    <div class="border-t border-gray-200 pt-4 space-y-3">
+        <div class="flex justify-between text-gray-600">
+            <span>Subtotal</span>
+            <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
         </div>
-        <div class="flex justify-between items-center">
-          <span class="text-gray-600">Shipping</span>
-          <div class="flex items-center space-x-2">
-            <span class="text-green-600 border border-green-200 rounded px-2 py-1 bg-green-50 text-xs font-semibold">FREE</span>
-            <span class="line-through text-gray-400">${{ $shipping }}</span>
-          </div>
+        <div class="flex justify-between text-gray-600">
+            <span>PPN (11%)</span>
+            <span>Rp {{ number_format($tax, 0, ',', '.') }}</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Tax</span>
-          <span class="font-semibold">${{ number_format($tax, 2) }}</span>
+        <div class="flex justify-between text-gray-600">
+            <span>Ongkos Kirim</span>
+            <span>Rp {{ number_format($shipping, 0, ',', '.') }}</span>
         </div>
-        <div class="my-4 border-t border-gray-200"></div>
-        <div class="flex justify-between text-xl font-bold">
-          <span>Total</span>
-          <span>${{ number_format($total, 2) }}</span>
+        <div class="border-t border-gray-200 pt-3 flex justify-between items-center">
+            <span class="text-lg font-bold text-gray-800">Total</span>
+            <span class="text-xl font-bold text-emerald-600">Rp {{ number_format($total, 0, ',', '.') }}</span>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow">
-    <div class="p-6">
-      <h3 class="font-semibold text-lg mb-4">Promo Code</h3>
-      <div class="flex space-x-2">
-        <input placeholder="Enter code" class="border border-gray-300 rounded px-4 py-2 w-full" />
-        <button class="border border-gray-300 rounded px-4 py-2 font-semibold bg-white hover:bg-gray-50 transition">Apply</button>
-      </div>
+    
+    <!-- Promo Code Section -->
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+        <label for="promo-code" class="block text-sm font-medium text-gray-700 mb-2">Kode Promo</label>
+        <div class="flex space-x-2">
+            <input 
+                type="text" 
+                id="promo-code" 
+                name="promo-code" 
+                placeholder="Masukkan kode promo"
+                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+            >
+            <button 
+                type="button" 
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 text-sm font-medium"
+            >
+                Terapkan
+            </button>
+        </div>
     </div>
-  </div>
-  <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-6 rounded-lg flex items-center justify-center text-lg">
-    <!-- CreditCard Icon -->
-    <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-    Proceed to Checkout
-  </button>
-  <div class="space-y-3 text-sm text-gray-600">
-    <div class="flex items-center space-x-2">
-      <!-- Truck Icon -->
-      <svg class="h-4 w-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h3l4 4v4a2 2 0 0 1-2 2H17a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      <span>Free shipping on orders over $100</span>
+    
+    <!-- Checkout Button -->
+    <div class="mt-6">
+        <button class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-md hover:shadow-lg">
+            Lanjutkan ke Checkout
+        </button>
     </div>
-    <div class="flex items-center space-x-2">
-      <!-- Shield Icon -->
-      <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>Secure checkout with SSL encryption</span>
+    
+    <!-- Continue Shopping -->
+    <div class="mt-4">
+        <a href="{{ route('products.index') }}" class="w-full block text-center bg-white border border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-300">
+            Lanjutkan Belanja
+        </a>
     </div>
-    <div class="flex items-center space-x-2">
-      <!-- CreditCard Icon -->
-      <svg class="h-4 w-4 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      <span>30-day money-back guarantee</span>
+    
+    <!-- Security Note -->
+    <div class="mt-6 flex items-center justify-center text-xs text-gray-500">
+        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        Transaksi Aman & Terlindungi
     </div>
-  </div>
 </div>
