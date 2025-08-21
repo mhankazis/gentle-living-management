@@ -4,8 +4,28 @@
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
     @include('components.header')
+    
+    <!-- Page Header Section -->
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-8 text-center">Checkout</h1>
+        <div class="mb-8">
+            <!-- Breadcrumb -->
+            <nav class="text-sm text-gray-600 mb-4">
+                <a href="{{ route('dashboard') }}" class="hover:text-blue-600 transition-colors duration-300">Beranda</a>
+                <span class="mx-2">/</span>
+                <a href="{{ route('cart.index') }}" class="hover:text-blue-600 transition-colors duration-300">Keranjang</a>
+                <span class="mx-2">/</span>
+                <span class="text-gray-900 font-medium">Checkout</span>
+            </nav>
+            
+            <!-- Page Title -->
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Checkout</h1>
+                <p class="text-gray-600">Lengkapi informasi untuk menyelesaikan pesanan Anda</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto px-4 py-8">
         <div class="grid lg:grid-cols-2 gap-8"
             x-data="{
                 shipping: {
@@ -44,7 +64,7 @@
         >
             {{-- Form Checkout --}}
             <div class="space-y-6">
-                <div class="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
+                <div class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200">
                     <div class="px-8 pt-8">
                         <div class="flex items-center space-x-2 mb-4">
                             <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
@@ -95,7 +115,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
+                <div class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200">
                     <div class="px-8 pt-8">
                         <div class="flex items-center space-x-2 mb-4">
                             <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>
@@ -120,7 +140,7 @@
             </div>
             {{-- Ringkasan Pesanan --}}
             <div>
-                <div class="border-0 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
+                <div class="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200">
                     <div class="px-8 pt-8 pb-8 space-y-4">
                         <div class="font-semibold text-lg mb-2">Ringkasan Pesanan</div>
                         <template x-for="item in cart" :key="item.id">
@@ -155,7 +175,7 @@
                         <button
                             @click="submit"
                             :disabled="isProcessing"
-                            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 text-lg rounded-lg font-semibold transition disabled:opacity-60 mt-4"
+                            class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 text-lg rounded-lg font-semibold transition disabled:opacity-60 mt-4"
                         >
                             <template x-if="isProcessing">Memproses...</template>
                             <template x-if="!isProcessing">
