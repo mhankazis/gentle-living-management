@@ -54,16 +54,13 @@ class CartController extends Controller
             
             if ($cartItem) {
                 $cartItem->quantity += $request->quantity;
-                $cartItem->subtotal = $cartItem->quantity * $cartItem->item_price;
                 $cartItem->save();
             } else {
                 Cart::create([
                     'session_id' => $sessionId,
                     'item_id' => $request->item_id,
-                    'item_name' => $item->name_item,
-                    'item_price' => $item->sell_price,
                     'quantity' => $request->quantity,
-                    'subtotal' => $item->sell_price * $request->quantity
+                    'price' => $item->sell_price
                 ]);
             }
             
@@ -93,7 +90,7 @@ class CartController extends Controller
             $user = Auth::guard('master_users')->user();
             $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
             
-            $cartItem = Cart::where('cart_id', $id)
+            $cartItem = Cart::where('id', $id)
                 ->where('session_id', $sessionId)
                 ->firstOrFail();
             
@@ -107,7 +104,6 @@ class CartController extends Controller
             }
             
             $cartItem->quantity = $request->quantity;
-            $cartItem->subtotal = $cartItem->item_price * $request->quantity;
             $cartItem->save();
             
             $itemCount = Cart::getTotalItems($sessionId);
@@ -134,7 +130,7 @@ class CartController extends Controller
             $user = Auth::guard('master_users')->user();
             $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
             
-            $cartItem = Cart::where('cart_id', $id)
+            $cartItem = Cart::where('id', $id)
                 ->where('session_id', $sessionId)
                 ->firstOrFail();
             
@@ -198,27 +194,6 @@ class CartController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mendapatkan jumlah item: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    
-    public function items()
-    {
-        try {
-            $user = Auth::guard('master_users')->user();
-            $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
-            
-            $cartItems = Cart::getCartItems($sessionId);
-            
-            return response()->json([
-                'success' => true,
-                'items' => $cartItems
-            ]);
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memuat item keranjang: ' . $e->getMessage()
             ], 500);
         }
     }

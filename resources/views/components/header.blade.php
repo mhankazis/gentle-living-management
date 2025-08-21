@@ -1,21 +1,31 @@
 @php
-$cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ada
+use App\Models\Cart;
+use Illuminate\Support\Facades\Auth;
+
+// Get actual cart count based on user authentication
+if (Auth::guard('master_users')->check()) {
+    $user = Auth::guard('master_users')->user();
+    $sessionId = 'user_' . $user->user_id;
+} else {
+    $sessionId = session()->getId();
+}
+$cartItemsCount = Cart::getTotalItems($sessionId);
 @endphp
 <!-- Header ala EliteShop sebagai komponen Blade -->
 <header class="bg-white shadow-lg sticky top-0 z-50">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
-            <a href="/" class="flex items-center space-x-2">
+            <a href="/" class="flex items-center space-x-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">
                 <img src="{{ asset('images/logo-gentle-living.png') }}" alt="Gentle Living" class="h-10 w-auto max-w-[150px]">
                 <div class="text-xl font-bold text-gray-800 hidden">
                     <span class="text-emerald-600">Gentle</span> <span class="text-blue-600">Living</span>
                 </div>
             </a>
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Beranda</a>
-                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Produk</a>
-                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Riwayat</a>
-                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Tentang</a>
+                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Beranda</a>
+                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Produk</a>
+                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Riwayat</a>
+                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Tentang</a>
             </nav>
             <div class="flex items-center space-x-4">
                 <div class="hidden md:flex items-center space-x-2">
@@ -71,7 +81,9 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
                     <button class="relative px-3 py-2 rounded hover:bg-gray-100">
                         <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61l1.38-7.39H6"/></svg>
                         @if ($cartItemsCount > 0)
-                        <span class="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white rounded-full">{{ $cartItemsCount }}</span>
+                        <span data-cart-count class="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white rounded-full">{{ $cartItemsCount }}</span>
+                        @else
+                        <span data-cart-count class="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-600 text-white rounded-full hidden"></span>
                         @endif
                     </button>
                 </a>
@@ -83,11 +95,117 @@ $cartItemsCount = session('cart_count', 3); // Ganti dengan data dinamis jika ad
         <!-- Mobile Menu -->
         <div class="md:hidden hidden py-4 border-t" x-ref="mobileMenu">
             <nav class="flex flex-col space-y-2">
-                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Home</a>
-                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Products</a>
-                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Riwayat</a>
-                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors py-2">About</a>
+                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Home</a>
+                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Products</a>
+                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Riwayat</a>
+                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">About</a>
             </nav>
         </div>
     </div>
 </header>
+
+<!-- Cart Counter Script -->
+<script>
+// Global cart counter management
+window.CartCounter = {
+    // Update cart count in header
+    updateCount: function(count) {
+        const cartBadge = document.querySelector('[data-cart-count]');
+        if (cartBadge) {
+            if (count > 0) {
+                cartBadge.textContent = count;
+                cartBadge.classList.remove('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+            }
+        }
+    },
+
+    // Fetch current cart count from server
+    refreshCount: function() {
+        fetch('/cart/count', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.updateCount(data.cart_count || 0);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching cart count:', error);
+        });
+    },
+
+    // Initialize cart counter on page load
+    init: function() {
+        // Refresh count when page loads
+        this.refreshCount();
+        
+        // Listen for custom cart update events
+        document.addEventListener('cartUpdated', (event) => {
+            if (event.detail && event.detail.count !== undefined) {
+                this.updateCount(event.detail.count);
+            } else {
+                this.refreshCount();
+            }
+        });
+        
+        // Refresh count when page becomes visible (user returns to tab)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                this.refreshCount();
+            }
+        });
+        
+        // Refresh count when window gains focus
+        window.addEventListener('focus', () => {
+            this.refreshCount();
+        });
+    }
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    window.CartCounter.init();
+});
+
+// Also initialize when window loads (backup)
+window.addEventListener('load', function() {
+    if (window.CartCounter) {
+        window.CartCounter.refreshCount();
+    }
+});
+
+// Helper function to trigger cart update event
+window.triggerCartUpdate = function(count = null) {
+    const event = new CustomEvent('cartUpdated', {
+        detail: { count: count }
+    });
+    document.dispatchEvent(event);
+};
+
+// Enhanced cart refresh for navigation
+window.refreshCartOnNavigation = function() {
+    setTimeout(() => {
+        if (window.CartCounter) {
+            window.CartCounter.refreshCount();
+        }
+    }, 100);
+};
+
+// Add event listeners for all navigation links
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('a[href^="/"]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            window.refreshCartOnNavigation();
+        });
+    });
+});
+</script>

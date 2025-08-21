@@ -1,13 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
-        <div class="flex space-x-2">
-            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Admin Panel</span>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    @include('components.header')
+    
+    <div class="container mx-auto px-4 py-8">
+        <!-- Admin Header Section -->
+        <div class="mb-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Admin Dashboard</h1>
+                <p class="text-gray-600 text-lg">Kelola dan monitor sistem Gentle Living</p>
+                <div class="flex justify-center mt-4">
+                    <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Admin Panel</span>
+                </div>
+            </div>
         </div>
-    </div>
     
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -73,7 +80,7 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Aksi Cepat</h2>
             <div class="space-y-3">
-                <a href="{{ route('admin.orders') }}" 
+                <a href="{{ route('admin.orders.index') }}" 
                    class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition duration-200">
                     <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -81,7 +88,7 @@
                     <span class="text-blue-800 font-medium">Kelola Pesanan</span>
                 </a>
                 
-                <a href="{{ route('admin.orders') }}?status=pending" 
+                <a href="{{ route('admin.orders.index') }}?status=pending" 
                    class="flex items-center p-3 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition duration-200">
                     <svg class="w-5 h-5 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -132,7 +139,7 @@
         <div class="p-6 border-b border-gray-200">
             <div class="flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800">Pesanan Terbaru</h2>
-                <a href="{{ route('admin.orders') }}" class="text-blue-600 hover:text-blue-800 font-medium">
+                <a href="{{ route('admin.orders.index') }}" class="text-blue-600 hover:text-blue-800 font-medium">
                     Lihat Semua
                 </a>
             </div>
@@ -154,16 +161,16 @@
                     @forelse($recentOrders as $order)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="font-medium text-gray-800">{{ $order->order_number }}</span>
+                            <span class="font-medium text-gray-800">{{ $order->number ?? 'TS-' . $order->transaction_sales_id }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div>
-                                <p class="text-gray-800 font-medium">{{ $order->customer_name }}</p>
-                                <p class="text-gray-600 text-sm">{{ $order->customer_email }}</p>
+                                <p class="text-gray-800 font-medium">{{ $order->customer_name ?? 'Customer' }}</p>
+                                <p class="text-gray-600 text-sm">{{ $order->whatsapp ?? '-' }}</p>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="font-semibold text-gray-800">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
+                            <span class="font-semibold text-gray-800">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full
@@ -174,14 +181,14 @@
                                 @elseif($order->status == 'delivered') bg-green-100 text-green-800
                                 @elseif($order->status == 'cancelled') bg-red-100 text-red-800
                                 @endif">
-                                {{ $order->status_label }}
+                                {{ ucfirst($order->status) }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-gray-600">
                             {{ $order->created_at->format('d M Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="{{ route('admin.orders.detail', $order->order_id) }}" 
+                            <a href="{{ route('admin.orders.show', $order->transaction_sales_id) }}" 
                                class="text-blue-600 hover:text-blue-800 font-medium">
                                 Detail
                             </a>
@@ -198,5 +205,8 @@
             </table>
         </div>
     </div>
+    
+    @include('components.features')
+    @include('components.footer')
 </div>
 @endsection

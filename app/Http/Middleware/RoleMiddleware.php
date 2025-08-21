@@ -16,11 +16,14 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!Auth::check()) {
+        // Cek autentikasi di guard master_users terlebih dahulu
+        if (Auth::guard('master_users')->check()) {
+            $user = Auth::guard('master_users')->user();
+        } elseif (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
+        } else {
             return redirect()->route('login');
         }
-
-        $user = Auth::user();
         
         // Check if user has any of the allowed roles
         if (!in_array($user->role, $roles)) {

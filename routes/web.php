@@ -25,6 +25,18 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
 Route::get('/categories/{id}', [ProductController::class, 'getByCategory'])->name('products.category');
 
+// Cart quantity route - public access
+Route::get('/cart/quantity/{itemId}', [CartController::class, 'getQuantity'])->name('cart.quantity');
+
+// Cart Routes - public access for guest users
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
+Route::get('/cart/items', [CartController::class, 'items'])->name('cart.items');
+
 // Image Routes
 Route::get('/images/{filename}', function ($filename) {
     $path = public_path('images/' . $filename);
@@ -38,13 +50,32 @@ Route::get('/images/{filename}', function ($filename) {
 Route::redirect('/produk', '/products')->name('products');
 
 // Admin Routes - Hanya admin dan super_admin yang bisa akses
-Route::prefix('admin')->middleware(['auth', 'role:admin,super_admin'])->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\AdminOrderController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/orders', [App\Http\Controllers\AdminOrderController::class, 'orders'])->name('admin.orders');
-    Route::get('/orders/{orderId}', [App\Http\Controllers\AdminOrderController::class, 'orderDetail'])->name('admin.orders.detail');
-    Route::post('/orders/{orderId}/status', [App\Http\Controllers\AdminOrderController::class, 'updateOrderStatus'])->name('admin.orders.status');
-    Route::post('/orders/{orderId}/approve-cancellation', [App\Http\Controllers\AdminOrderController::class, 'approveCancellation'])->name('admin.orders.approve-cancellation');
-    Route::post('/orders/{orderId}/reject-cancellation', [App\Http\Controllers\AdminOrderController::class, 'rejectCancellation'])->name('admin.orders.reject-cancellation');
+Route::prefix('admin')->middleware(['auth:master_users', 'role:admin,super_admin'])->group(function () {
+    // Debug route untuk test middleware
+    Route::get('/test', function () {
+        $user = \Illuminate\Support\Facades\Auth::guard('master_users')->user();
+        return response()->json([
+            'message' => 'Admin access successful!',
+            'user' => [
+                'id' => $user->user_id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role
+            ]
+        ]);
+    })->name('admin.test');
+    
+    Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
+    // Order Management Routes
+    Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+    Route::patch('/orders/{id}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.orders.update-status');
+    Route::patch('/orders/{id}/payment', [App\Http\Controllers\Admin\OrderController::class, 'updatePaymentStatus'])->name('admin.orders.update-payment');
+    Route::post('/orders/{id}/approve-cancellation', [App\Http\Controllers\Admin\OrderController::class, 'approveCancellation'])->name('admin.orders.approve-cancellation');
+    Route::post('/orders/{id}/reject-cancellation', [App\Http\Controllers\Admin\OrderController::class, 'rejectCancellation'])->name('admin.orders.reject-cancellation');
+    Route::get('/orders/export', [App\Http\Controllers\Admin\OrderController::class, 'export'])->name('admin.orders.export');
+    Route::get('/orders/statistics', [App\Http\Controllers\Admin\OrderController::class, 'statistics'])->name('admin.orders.statistics');
 });
 
 Route::get('/categories', function () {
@@ -76,9 +107,9 @@ Route::get('/register', [App\Http\Controllers\Auth\RegisteredUserController::cla
 Route::post('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'store']);
 
 // Protected Routes - Semua authenticated users
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:master_users')->group(function () {
     Route::get('/profile', function () {
-        $user = Auth::user();
+        $user = Auth::guard('master_users')->user();
         return view('profile', ['user' => $user]);
     })->name('profile');
     
@@ -86,21 +117,14 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
     
-    // User Order Management Routes - Hanya user yang bisa akses
-    Route::middleware('role:user')->group(function () {
-        Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
-        Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-        Route::get('/orders/{orderId}/success', [OrderController::class, 'success'])->name('orders.success');
-        Route::post('/orders/{orderId}/cancel', [OrderController::class, 'cancelRequest'])->name('orders.cancel');
-    });
-    
     // Cart Routes - Semua authenticated users bisa akses cart
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::post('/cart/{cartId}/update', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/{cartId}/remove', [CartController::class, 'remove'])->name('cart.remove');
-    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
+    // (Moved to public section above)
+    
+    // User Order Management Routes - Checkout accessible to all authenticated users
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{orderId}/success', [OrderController::class, 'success'])->name('orders.success');
+    Route::post('/orders/{orderId}/cancel', [OrderController::class, 'cancelRequest'])->name('orders.cancel');
 });
 
 // Route bawaan Laravel untuk profile (edit, update, destroy) dihapus agar tidak bentrok dengan route custom
