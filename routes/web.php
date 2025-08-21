@@ -31,10 +31,11 @@ Route::get('/cart/quantity/{itemId}', [CartController::class, 'getQuantity'])->n
 // Cart Routes - public access for guest users
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/{cartId}/update', [CartController::class, 'update'])->name('cart.update');
-Route::delete('/cart/{cartId}/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::get('/cart/count', [CartController::class, 'count'])->name('cart.count');
+Route::get('/cart/items', [CartController::class, 'items'])->name('cart.items');
 
 // Image Routes
 Route::get('/images/{filename}', function ($filename) {

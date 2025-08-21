@@ -60,7 +60,7 @@
                             <!-- Quantity Controls -->
                             <div class="flex items-center space-x-3">
                                 <button @click="updateQuantity({{ $item->cart_id }}, quantity - 1)" 
-                                        :disabled="quantity <= 1"
+                                        :disabled="quantity <= 1 || updating"
                                         class="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <line x1="5" y1="12" x2="19" y2="12"/>
@@ -68,7 +68,8 @@
                                 </button>
                                 <span class="w-12 text-center font-medium" x-text="quantity"></span>
                                 <button @click="updateQuantity({{ $item->cart_id }}, quantity + 1)"
-                                        class="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors duration-300">
+                                        :disabled="updating"
+                                        class="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <line x1="12" y1="5" x2="12" y2="19"/>
                                         <line x1="5" y1="12" x2="19" y2="12"/>
@@ -80,7 +81,8 @@
                             <div class="text-right">
                                 <p class="text-lg font-bold text-gray-800 mb-2">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</p>
                                 <button @click="removeItem({{ $item->cart_id }})" 
-                                        class="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg p-2 transition-colors duration-300">
+                                        :disabled="updating"
+                                        class="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg p-2 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <polyline points="3 6 5 6 21 6"/>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -165,68 +167,107 @@
 <script>
 function cartManager() {
     return {
-        updateQuantity(cartId, newQuantity) {
-            if (newQuantity < 1) return;
+        updating: false,
+        
+        async updateQuantity(cartId, newQuantity) {
+            if (newQuantity < 1 || this.updating) return;
             
-            fetch(`/cart/${cartId}/update`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ quantity: newQuantity })
-            })
-            .then(response => response.json())
-            .then(data => {
+            this.updating = true;
+            
+            try {
+                const response = await fetch(`/cart/update/${cartId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ quantity: newQuantity })
+                });
+                
+                const data = await response.json();
+                
                 if (data.success) {
-                    // Update cart counter before reload
-                    if (window.triggerCartUpdate) {
-                        window.triggerCartUpdate();
+                    // Update cart counter
+                    if (window.CartCounter && data.cart_count !== undefined) {
+                        window.CartCounter.updateCount(data.cart_count);
                     }
                     location.reload();
+                } else {
+                    alert(data.message || 'Gagal memperbarui keranjang');
                 }
-            });
-        },
-        
-        removeItem(cartId) {
-            if (confirm('Hapus produk ini dari keranjang?')) {
-                fetch(`/cart/${cartId}/remove`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update cart counter before reload
-                        if (window.triggerCartUpdate) {
-                            window.triggerCartUpdate();
-                        }
-                        location.reload();
-                    }
-                });
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                alert('Terjadi kesalahan saat memperbarui keranjang');
+            } finally {
+                this.updating = false;
             }
         },
         
-        clearCart() {
-            if (confirm('Kosongkan semua produk di keranjang?')) {
-                fetch('/cart/clear', {
-                    method: 'POST',
+        async removeItem(cartId) {
+            if (!confirm('Hapus produk ini dari keranjang?')) return;
+            
+            if (this.updating) return;
+            this.updating = true;
+            
+            try {
+                const response = await fetch(`/cart/remove/${cartId}`, {
+                    method: 'DELETE',
                     headers: {
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update cart counter to 0
-                        if (window.CartCounter) {
-                            window.CartCounter.updateCount(0);
-                        }
-                        location.reload();
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update cart counter
+                    if (window.CartCounter && data.cart_count !== undefined) {
+                        window.CartCounter.updateCount(data.cart_count);
+                    }
+                    location.reload();
+                } else {
+                    alert(data.message || 'Gagal menghapus item');
+                }
+            } catch (error) {
+                console.error('Error removing item:', error);
+                alert('Terjadi kesalahan saat menghapus item');
+            } finally {
+                this.updating = false;
+            }
+        },
+        
+        async clearCart() {
+            if (!confirm('Kosongkan semua produk di keranjang?')) return;
+            
+            if (this.updating) return;
+            this.updating = true;
+            
+            try {
+                const response = await fetch('/cart/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update cart counter to 0
+                    if (window.CartCounter) {
+                        window.CartCounter.updateCount(0);
+                    }
+                    location.reload();
+                } else {
+                    alert(data.message || 'Gagal mengosongkan keranjang');
+                }
+            } catch (error) {
+                console.error('Error clearing cart:', error);
+                alert('Terjadi kesalahan saat mengosongkan keranjang');
+            } finally {
+                this.updating = false;
             }
         }
     }

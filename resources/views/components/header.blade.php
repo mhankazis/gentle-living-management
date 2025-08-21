@@ -15,17 +15,17 @@ $cartItemsCount = Cart::getTotalItems($sessionId);
 <header class="bg-white shadow-lg sticky top-0 z-50">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
-            <a href="/" class="flex items-center space-x-2">
+            <a href="/" class="flex items-center space-x-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">
                 <img src="{{ asset('images/logo-gentle-living.png') }}" alt="Gentle Living" class="h-10 w-auto max-w-[150px]">
                 <div class="text-xl font-bold text-gray-800 hidden">
                     <span class="text-emerald-600">Gentle</span> <span class="text-blue-600">Living</span>
                 </div>
             </a>
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Beranda</a>
-                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Produk</a>
-                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Riwayat</a>
-                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium">Tentang</a>
+                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Beranda</a>
+                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Produk</a>
+                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Riwayat</a>
+                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Tentang</a>
             </nav>
             <div class="flex items-center space-x-4">
                 <div class="hidden md:flex items-center space-x-2">
@@ -95,10 +95,10 @@ $cartItemsCount = Cart::getTotalItems($sessionId);
         <!-- Mobile Menu -->
         <div class="md:hidden hidden py-4 border-t" x-ref="mobileMenu">
             <nav class="flex flex-col space-y-2">
-                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Home</a>
-                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Products</a>
-                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors py-2">Riwayat</a>
-                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors py-2">About</a>
+                <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Home</a>
+                <a href="/products" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Products</a>
+                <a href="/history" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">Riwayat</a>
+                <a href="/about" class="text-gray-700 hover:text-blue-600 transition-colors py-2" onclick="setTimeout(() => window.CartCounter && window.CartCounter.refreshCount(), 100)">About</a>
             </nav>
         </div>
     </div>
@@ -133,7 +133,9 @@ window.CartCounter = {
         })
         .then(response => response.json())
         .then(data => {
-            this.updateCount(data.count || 0);
+            if (data.success) {
+                this.updateCount(data.cart_count || 0);
+            }
         })
         .catch(error => {
             console.error('Error fetching cart count:', error);
@@ -153,12 +155,31 @@ window.CartCounter = {
                 this.refreshCount();
             }
         });
+        
+        // Refresh count when page becomes visible (user returns to tab)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                this.refreshCount();
+            }
+        });
+        
+        // Refresh count when window gains focus
+        window.addEventListener('focus', () => {
+            this.refreshCount();
+        });
     }
 };
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     window.CartCounter.init();
+});
+
+// Also initialize when window loads (backup)
+window.addEventListener('load', function() {
+    if (window.CartCounter) {
+        window.CartCounter.refreshCount();
+    }
 });
 
 // Helper function to trigger cart update event
@@ -168,4 +189,23 @@ window.triggerCartUpdate = function(count = null) {
     });
     document.dispatchEvent(event);
 };
+
+// Enhanced cart refresh for navigation
+window.refreshCartOnNavigation = function() {
+    setTimeout(() => {
+        if (window.CartCounter) {
+            window.CartCounter.refreshCount();
+        }
+    }, 100);
+};
+
+// Add event listeners for all navigation links
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('a[href^="/"]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            window.refreshCartOnNavigation();
+        });
+    });
+});
 </script>
