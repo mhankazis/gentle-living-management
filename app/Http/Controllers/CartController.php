@@ -23,106 +23,181 @@ class CartController extends Controller
     
     public function add(Request $request)
     {
-        $request->validate([
-            'item_id' => 'required|exists:master_items,item_id',
-            'quantity' => 'required|integer|min:1'
-        ]);
-        
-        $item = MasterItem::findOrFail($request->item_id);
-        $user = Auth::guard('master_users')->user();
-        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
-        
-        // Check if item already in cart
-        $cartItem = Cart::where('session_id', $sessionId)
-                       ->where('item_id', $request->item_id)
-                       ->first();
-        
-        if ($cartItem) {
-            // Update quantity
-            $cartItem->quantity += $request->quantity;
-            $cartItem->subtotal = $cartItem->quantity * $cartItem->item_price;
-            $cartItem->save();
-        } else {
-            // Add new item
-            Cart::create([
-                'session_id' => $sessionId,
-                'item_id' => $item->item_id,
-                'item_name' => $item->name_item,
-                'item_price' => $item->sell_price,
-                'quantity' => $request->quantity,
-                'subtotal' => $item->sell_price * $request->quantity
+        try {
+            $request->validate([
+                'item_id' => 'required|exists:master_items,item_id',
+                'quantity' => 'required|integer|min:1'
             ]);
+            
+            $item = MasterItem::findOrFail($request->item_id);
+            $user = Auth::guard('master_users')->user();
+            $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+            
+            // Check stock availability
+            $currentCartQuantity = Cart::where('session_id', $sessionId)
+                ->where('item_id', $request->item_id)
+                ->sum('quantity');
+            
+            $totalRequestedQuantity = $currentCartQuantity + $request->quantity;
+            
+            if ($totalRequestedQuantity > $item->stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $item->stock . ', sudah di keranjang: ' . $currentCartQuantity
+                ], 400);
+            }
+            
+            // Add or update cart item
+            $cartItem = Cart::where('session_id', $sessionId)
+                ->where('item_id', $request->item_id)
+                ->first();
+            
+            if ($cartItem) {
+                $cartItem->quantity += $request->quantity;
+                $cartItem->subtotal = $cartItem->quantity * $cartItem->item_price;
+                $cartItem->save();
+            } else {
+                Cart::create([
+                    'session_id' => $sessionId,
+                    'item_id' => $request->item_id,
+                    'item_name' => $item->name_item,
+                    'item_price' => $item->sell_price,
+                    'quantity' => $request->quantity,
+                    'subtotal' => $item->sell_price * $request->quantity
+                ]);
+            }
+            
+            $itemCount = Cart::getTotalItems($sessionId);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Item berhasil ditambahkan ke keranjang!',
+                'cart_count' => $itemCount
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan item ke keranjang: ' . $e->getMessage()
+            ], 500);
         }
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Produk berhasil ditambahkan ke keranjang',
-            'cart_count' => Cart::getTotalItems($sessionId)
-        ]);
     }
     
-    public function update(Request $request, $cartId)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'quantity' => 'required|integer|min:1'
-        ]);
-        
-        $user = Auth::guard('master_users')->user();
-        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
-        
-        $cartItem = Cart::where('cart_id', $cartId)
-                       ->where('session_id', $sessionId)
-                       ->firstOrFail();
-        
-        $cartItem->quantity = $request->quantity;
-        $cartItem->subtotal = $cartItem->quantity * $cartItem->item_price;
-        $cartItem->save();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Kuantitas berhasil diupdate',
-            'subtotal' => number_format($cartItem->subtotal, 0, ',', '.'),
-            'total' => number_format(Cart::getTotalAmount($sessionId), 0, ',', '.')
-        ]);
+        try {
+            $request->validate([
+                'quantity' => 'required|integer|min:1'
+            ]);
+            
+            $user = Auth::guard('master_users')->user();
+            $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+            
+            $cartItem = Cart::where('id', $id)
+                ->where('session_id', $sessionId)
+                ->firstOrFail();
+            
+            $item = MasterItem::findOrFail($cartItem->item_id);
+            
+            if ($request->quantity > $item->stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $item->stock
+                ], 400);
+            }
+            
+            $cartItem->quantity = $request->quantity;
+            $cartItem->save();
+            
+            $itemCount = Cart::getTotalItems($sessionId);
+            $total = Cart::getTotalAmount($sessionId);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Keranjang berhasil diperbarui!',
+                'cart_count' => $itemCount,
+                'total' => $total
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui keranjang: ' . $e->getMessage()
+            ], 500);
+        }
     }
     
-    public function remove($cartId)
+    public function remove($id)
     {
-        $user = Auth::guard('master_users')->user();
-        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
-        
-        $cartItem = Cart::where('cart_id', $cartId)
-                       ->where('session_id', $sessionId)
-                       ->firstOrFail();
-        
-        $cartItem->delete();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Produk berhasil dihapus dari keranjang'
-        ]);
+        try {
+            $user = Auth::guard('master_users')->user();
+            $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+            
+            $cartItem = Cart::where('id', $id)
+                ->where('session_id', $sessionId)
+                ->firstOrFail();
+            
+            $cartItem->delete();
+            
+            $itemCount = Cart::getTotalItems($sessionId);
+            $total = Cart::getTotalAmount($sessionId);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Item berhasil dihapus dari keranjang!',
+                'cart_count' => $itemCount,
+                'total' => $total
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus item dari keranjang: ' . $e->getMessage()
+            ], 500);
+        }
     }
     
     public function clear()
     {
-        $user = Auth::guard('master_users')->user();
-        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
-        
-        Cart::where('session_id', $sessionId)->delete();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Keranjang berhasil dikosongkan'
-        ]);
+        try {
+            $user = Auth::guard('master_users')->user();
+            $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+            
+            Cart::where('session_id', $sessionId)->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Keranjang berhasil dikosongkan!',
+                'cart_count' => 0,
+                'total' => 0
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengosongkan keranjang: ' . $e->getMessage()
+            ], 500);
+        }
     }
     
     public function count()
     {
-        $user = Auth::guard('master_users')->user();
-        $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
-        
-        return response()->json([
-            'count' => Cart::getTotalItems($sessionId)
-        ]);
+        try {
+            $user = Auth::guard('master_users')->user();
+            $sessionId = $user ? 'user_' . $user->user_id : session()->getId();
+            
+            $itemCount = Cart::getTotalItems($sessionId);
+            
+            return response()->json([
+                'success' => true,
+                'cart_count' => $itemCount
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mendapatkan jumlah item: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

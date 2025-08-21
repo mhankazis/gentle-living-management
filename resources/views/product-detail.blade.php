@@ -25,6 +25,29 @@
         </nav>
     </div>
     
+    <!-- Notification -->
+    <div x-show="notification.show" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-y-2"
+         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform translate-y-2"
+         class="fixed top-4 right-4 z-50 max-w-sm w-full">
+        <div :class="notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'" 
+             class="text-white px-6 py-4 rounded-lg shadow-lg">
+            <div class="flex items-center">
+                <svg x-show="notification.type === 'success'" class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <svg x-show="notification.type === 'error'" class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span x-text="notification.message"></span>
+            </div>
+        </div>
+    </div>
+    
     <!-- Main Product Section -->
     <div class="container mx-auto px-4 pb-8">
         <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
@@ -196,6 +219,12 @@
 
                     <!-- Quantity & Add to Cart -->
                     <div class="space-y-4 pt-6 border-t border-gray-200">
+                        <!-- Stock Info -->
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">Stok tersedia:</span>
+                            <span class="font-medium text-gray-900" x-text="currentStock + ' item'"></span>
+                        </div>
+                        
                         <!-- Quantity Selector -->
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-4">
@@ -212,9 +241,9 @@
                                         <span class="font-medium" x-text="quantity"></span>
                                     </div>
                                     <button type="button" 
-                                            @click="quantity = Math.min({{ $product->stock }}, quantity + 1)" 
+                                            @click="quantity = Math.min(currentStock, quantity + 1)" 
                                             class="w-10 h-10 flex items-center justify-center hover:bg-gray-50 transition-colors rounded-r-lg"
-                                            :disabled="quantity >= {{ $product->stock }}">
+                                            :disabled="quantity >= currentStock">
                                         <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                         </svg>
@@ -228,18 +257,20 @@
 
                         <!-- Action Buttons -->
                         @if($product->stock > 0)
-                        <div class="flex space-x-3">
+                        <div class="w-full">
                             <button type="button"
                                     @click="addToCart"
-                                    class="flex-1 flex items-center justify-center px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 transform hover:scale-105">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    :disabled="isAddingToCart"
+                                    :class="isAddingToCart ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600'"
+                                    class="w-full flex items-center justify-center px-6 py-3 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                                <svg x-show="!isAddingToCart" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5-5M7 13l-2.5 5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                                 </svg>
-                                Tambah ke Keranjang
-                            </button>
-                            <button type="button" 
-                                    class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                                Beli Sekarang
+                                <svg x-show="isAddingToCart" class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span x-text="isAddingToCart ? 'Menambahkan...' : 'Tambah ke Keranjang'"></span>
                             </button>
                         </div>
                         @else
@@ -555,6 +586,8 @@ function productDetail() {
         ],
         quantity: 1,
         isLiked: false,
+        isAddingToCart: false,
+        currentStock: {{ $product->stock }},
         notification: {
             show: false,
             message: '',
@@ -563,7 +596,7 @@ function productDetail() {
         
         // Initialize component
         init() {
-            console.log('Product detail initialized');
+            // Component initialized
         },
         
         // Select image function
@@ -573,21 +606,31 @@ function productDetail() {
         
         // Add to cart function
         async addToCart() {
+            if (this.isAddingToCart) {
+                return;
+            }
+            
+            // Simple frontend validation
+            if (this.quantity > this.currentStock) {
+                this.showNotification('Quantity melebihi stok yang tersedia', 'error');
+                return;
+            }
+            
+            this.isAddingToCart = true;
+            
             try {
+                const requestData = {
+                    item_id: {{ $product->item_id }},
+                    quantity: this.quantity
+                };
+                
                 const response = await fetch('/cart/add', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    body: JSON.stringify({
-<<<<<<< HEAD
-                        item_id: {{ $product->item_id }},
-=======
-                        product_id: {{ $product->item_id }},
->>>>>>> df11114d01a3acb28793ba132395cb2811868213
-                        quantity: this.quantity
-                    })
+                    body: JSON.stringify(requestData)
                 });
                 
                 const data = await response.json();
@@ -602,11 +645,12 @@ function productDetail() {
                         window.triggerCartUpdate();
                     }
                 } else {
-                    this.showNotification(data.message || 'Gagal menambahkan ke keranjang', 'error');
+                    this.showNotification(data.message || 'Gagal menambahkan produk ke keranjang', 'error');
                 }
             } catch (error) {
                 this.showNotification('Terjadi kesalahan saat menambahkan ke keranjang', 'error');
-                console.error('Error:', error);
+            } finally {
+                this.isAddingToCart = false;
             }
         },
         
