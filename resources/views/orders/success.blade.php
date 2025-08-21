@@ -1,23 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Background with glassmorphism -->
-<div class="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-    <!-- Header Section -->
-    <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-6">
-            <!-- Page Title -->
-            <div class="text-center">
-                <div class="mx-auto h-16 w-16 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mb-4">
-                    <svg class="h-8 w-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    @include('components.header')
+    
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <!-- Success Icon -->
+            <div class="text-center mb-8">
+                <div class="mx-auto h-24 w-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-6">
+                    <svg class="h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-900">Pesanan Berhasil Dibuat!</h1>
-                <p class="text-gray-600 mt-1">Terima kasih atas pesanan Anda</p>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Pesanan Berhasil Dibuat!</h1>
+                <p class="text-gray-600">Terima kasih atas pesanan Anda. Kami akan segera memproses pesanan ini.</p>
             </div>
-        </div>
-    </div>
 
     <!-- Main Content -->
     <div class="max-w-4xl mx-auto px-4 py-8">

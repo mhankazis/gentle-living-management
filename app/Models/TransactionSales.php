@@ -9,30 +9,36 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionSales extends Model
 {
-    protected $primaryKey = 'transaction_id';
+    protected $primaryKey = 'transaction_sales_id';
     
     protected $fillable = [
-        'transaction_number',
+        'branch_id',
+        'payment_method_id',
         'user_id',
-        'customer_name',
-        'customer_email',
-        'customer_phone',
-        'shipping_address',
-        'city',
-        'postal_code',
+        'customer_id',
+        'sales_type_id',
+        'number',
+        'date',
         'notes',
-        'subtotal_amount',
-        'shipping_cost',
-        'tax_amount',
+        'admin_notes',
+        'payment_notes',
+        'updated_by',
+        'payment_updated_by',
+        'status_updated_at',
+        'payment_updated_at',
+        'subtotal',
+        'discount_amount',
+        'discount_percentage',
         'total_amount',
         'paid_amount',
+        'change_amount',
+        'whatsapp',
+        'status',
         'payment_status',
-        'order_status',
-        'transaction_date',
-        'cancellation_reason',
-        'cancellation_requested_at',
-        'cancelled_at',
-        'cancelled_by'
+        'customer_name',
+        'customer_phone',
+        'customer_address',
+        'cancellation_requested_at'
     ];
 
     protected $casts = [
@@ -55,7 +61,7 @@ class TransactionSales extends Model
     // Relationship dengan detail transaksi
     public function details(): HasMany
     {
-        return $this->hasMany(TransactionSalesDetail::class, 'transaction_id', 'transaction_id');
+        return $this->hasMany(TransactionSalesDetail::class, 'transaction_sales_id', 'transaction_sales_id');
     }
 
     // Generate transaction number
