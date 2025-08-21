@@ -1,0 +1,139 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\TransactionSales;
+use Illuminate\Support\Facades\Auth;
+
+class AdminOrderController extends Controller
+{
+    public function dashboard()
+    {
+        $totalOrders = TransactionSales::count();
+        $pendingOrders = TransactionSales::where('order_status', 'pending')->count();
+        $processingOrders = TransactionSales::where('order_status', 'processing')->count();
+        $shippedOrders = TransactionSales::where('order_status', 'shipped')->count();
+        $deliveredOrders = TransactionSales::where('order_status', 'delivered')->count();
+        $cancellationRequests = TransactionSales::where('order_status', 'cancellation_requested')->count();
+        
+        $recentOrders = TransactionSales::with('user')
+                                      ->orderBy('created_at', 'desc')
+                                      ->take(10)
+                                      ->get();
+        
+        return view('admin.dashboard', compact(
+            'totalOrders', 'pendingOrders', 'processingOrders', 
+            'shippedOrders', 'deliveredOrders', 'cancellationRequests', 'recentOrders'
+        ));
+    }
+    
+    public function orders(Request $request)
+    {
+        $query = TransactionSales::with('user');
+        
+        // Filter by status
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('order_status', $request->status);
+        }
+        
+        // Filter by date range
+        if ($request->has('date_from') && $request->date_from !== '') {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        
+        if ($request->has('date_to') && $request->date_to !== '') {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+        
+        // Search by transaction number or customer name
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('transaction_number', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%");
+            });
+        }
+        
+        $orders = $query->orderBy('created_at', 'desc')->paginate(20);
+        
+        return view('admin.orders', compact('orders'));
+    }
+    
+    public function orderDetail($transactionId)
+    {
+        $transaction = TransactionSales::with(['user', 'details'])
+                                     ->findOrFail($transactionId);
+        
+        return view('admin.order-detail', compact('transaction'));
+    }
+    
+    public function updateOrderStatus(Request $request, $transactionId)
+    {
+        $request->validate([
+            'order_status' => 'required|in:pending,confirmed,processing,shipped,delivered',
+            'notes' => 'nullable|string|max:500'
+        ]);
+        
+        $transaction = TransactionSales::findOrFail($transactionId);
+        
+        if (!$transaction->canUpdateStatus()) {
+            return back()->with('error', 'Status pesanan tidak dapat diubah karena sudah dibatalkan atau selesai');
+        }
+        
+        // Prevent status downgrade (shipped -> processing, etc)
+        $statusOrder = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
+        $currentStatusIndex = array_search($transaction->order_status, $statusOrder);
+        $newStatusIndex = array_search($request->order_status, $statusOrder);
+        
+        if ($newStatusIndex < $currentStatusIndex && $transaction->order_status !== 'pending') {
+            return back()->with('error', 'Tidak dapat mengubah status ke status sebelumnya');
+        }
+        
+        $transaction->update([
+            'order_status' => $request->order_status,
+            'admin_notes' => $request->notes
+        ]);
+        
+        return back()->with('success', 'Status pesanan berhasil diperbarui');
+    }
+    
+    public function approveCancellation($transactionId)
+    {
+        $transaction = TransactionSales::findOrFail($transactionId);
+        
+        if (!$transaction->canApproveCancellation()) {
+            return back()->with('error', 'Pesanan ini tidak memiliki permintaan pembatalan yang dapat disetujui');
+        }
+        
+        $transaction->update([
+            'order_status' => 'cancelled',
+            'cancelled_at' => now(),
+            'cancelled_by' => Auth::guard('master_users')->id()
+        ]);
+        
+        return back()->with('success', 'Pembatalan pesanan telah disetujui');
+    }
+    
+    public function rejectCancellation(Request $request, $transactionId)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500'
+        ]);
+        
+        $transaction = TransactionSales::findOrFail($transactionId);
+        
+        if (!$transaction->canApproveCancellation()) {
+            return back()->with('error', 'Pesanan ini tidak memiliki permintaan pembatalan yang dapat ditolak');
+        }
+        
+        $transaction->update([
+            'order_status' => 'confirmed', // Reset to confirmed status
+            'cancellation_reason' => null,
+            'cancellation_requested_at' => null,
+            'rejection_reason' => $request->rejection_reason
+        ]);
+        
+        return back()->with('success', 'Permintaan pembatalan telah ditolak');
+    }
+}
