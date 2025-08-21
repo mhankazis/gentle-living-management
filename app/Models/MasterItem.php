@@ -22,7 +22,8 @@ class MasterItem extends Model
         'costprice_item',
         'sell_price',
         'stock',
-        'unit_item'
+        'unit_item',
+        'image'
     ];
     
     protected $casts = [
@@ -31,6 +32,15 @@ class MasterItem extends Model
         'stock' => 'integer',
         'category_id' => 'integer'
     ];
+    
+    // Accessor for image URL
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            return asset('images/' . $this->image);
+        }
+        return asset('images/placeholder.jpg');
+    }
     
     // Relationship with category if needed
     public function category()

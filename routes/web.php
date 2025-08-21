@@ -25,6 +25,15 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.detail');
 Route::get('/categories/{id}', [ProductController::class, 'getByCategory'])->name('products.category');
 
+// Image Routes
+Route::get('/images/{filename}', function ($filename) {
+    $path = public_path('images/' . $filename);
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path);
+})->name('image.serve');
+
 // Backward compatibility - alias for products route
 Route::redirect('/produk', '/products')->name('products');
 
