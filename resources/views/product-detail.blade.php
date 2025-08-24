@@ -28,14 +28,14 @@
     <!-- Notification -->
     <div x-show="notification.show" 
          x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 transform translate-y-2"
-         x-transition:enter-end="opacity-100 transform translate-y-0"
+         x-transition:enter-start="opacity-0 transform translate-x-full"
+         x-transition:enter-end="opacity-100 transform translate-x-0"
          x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 transform translate-y-0"
-         x-transition:leave-end="opacity-0 transform translate-y-2"
-         class="fixed top-4 right-4 z-50 max-w-sm w-full">
+         x-transition:leave-start="opacity-100 transform translate-x-0"
+         x-transition:leave-end="opacity-0 transform translate-x-full"
+         class="fixed top-4 right-4 z-50 max-w-sm w-full notification-enter">
         <div :class="notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'" 
-             class="text-white px-6 py-4 rounded-lg shadow-lg">
+             class="text-white px-6 py-4 rounded-lg shadow-lg product-badge">
             <div class="flex items-center">
                 <svg x-show="notification.type === 'success'" class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -56,20 +56,15 @@
                 <div class="space-y-4">
                     <!-- Main Image -->
                     <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden relative group">
-                        @if($product->image_url)
-                            <img :src="productImages[selectedImageIndex]" 
-                                 alt="{{ $product->name_item }}" 
-                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-                                <div class="text-center">
-                                    <svg class="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <p class="text-gray-500 font-medium">{{ $product->name_item }}</p>
-                                </div>
-                            </div>
-                        @endif
+                        <img :src="productVariants[selectedVariantIndex]?.image || '/images/placeholder.jpg'" 
+                             :alt="productVariants[selectedVariantIndex]?.name || '{{ $product->name_item }}'" 
+                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                        
+                        <!-- Product Variant Label -->
+                        <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg">
+                            <p class="text-sm font-medium text-gray-900" x-text="productVariants[selectedVariantIndex]?.name || '{{ $product->name_item }}'"></p>
+                            <p class="text-xs text-gray-600" x-text="productVariants[selectedVariantIndex]?.size || 'Original'"></p>
+                        </div>
                         
                         <!-- Like Button -->
                         <button @click="isLiked = !isLiked" 
@@ -81,23 +76,25 @@
                         </button>
                     </div>
                     
-                    <!-- Thumbnail Images -->
-                    <div class="flex gap-3 overflow-x-auto pb-2">
-                        <template x-for="(image, index) in productImages.slice(0, 4)" :key="index">
-                            <button @click="selectImage(index)" 
-                                    class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200"
-                                    :class="selectedImageIndex === index ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-gray-300'">
-                                @if($product->image_url)
-                                    <img :src="image" alt="Product thumbnail" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
+                    <!-- Thumbnail Images - Product Variants -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-medium text-gray-700">Varian Produk</h4>
+                        <div class="flex gap-3 overflow-x-auto pb-2 variant-scroll">
+                            <template x-for="(variant, index) in productVariants" :key="'variant-' + index">
+                                <button @click="selectVariant(index)" 
+                                        class="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 group variant-thumbnail"
+                                        :class="[
+                                            selectedVariantIndex === index ? 
+                                                'border-blue-500 ring-2 ring-blue-200 selected' : 
+                                                'border-gray-200 hover:border-gray-300'
+                                        ]">
+                                    <img :src="variant.image" :alt="variant.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs px-1 py-0.5 text-center image-overlay product-badge">
+                                        <span x-text="variant.size"></span>
                                     </div>
-                                @endif
-                            </button>
-                        </template>
+                                </button>
+                            </template>
+                        </div>
                     </div>
                 </div>
 
@@ -126,8 +123,11 @@
                     <!-- Price & Stock -->
                     <div class="flex items-center justify-between">
                         <div class="space-y-1">
-                            <div class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                Rp {{ number_format($product->sell_price, 0, ',', '.') }}
+                            <div class="text-4xl font-bold price-gradient">
+                                <span x-text="'Rp ' + new Intl.NumberFormat('id-ID').format(productVariants[selectedVariantIndex]?.price || {{ $product->sell_price }})"></span>
+                            </div>
+                            <div class="text-sm text-gray-500" x-show="productVariants[selectedVariantIndex]">
+                                Varian: <span x-text="productVariants[selectedVariantIndex]?.size || 'Original'"></span>
                             </div>
                             @if($product->stock <= 10 && $product->stock > 0)
                             <div class="text-sm text-amber-600 font-medium">⚠️ Stok hampir habis!</div>
@@ -151,19 +151,22 @@
                         </div>
                     </div>
 
-                    <!-- Varian -->
+                    <!-- Size Variants -->
                     <div class="space-y-3">
-                        <h3 class="text-lg font-semibold text-gray-900">Varian</h3>
-                        <div class="flex space-x-3">
-                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-blue-500 hover:text-blue-600 transition-colors">
-                                Varian 1
-                            </button>
-                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-blue-500 hover:text-blue-600 transition-colors">
-                                Varian 2
-                            </button>
-                            <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:border-blue-500 hover:text-blue-600 transition-colors">
-                                Varian 3
-                            </button>
+                        <h3 class="text-lg font-semibold text-gray-900">Pilih Ukuran</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <template x-for="(variant, index) in productVariants" :key="'size-' + index">
+                                <button @click="selectVariant(index)" 
+                                        class="p-3 border rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+                                        :class="selectedVariantIndex === index ? 
+                                            'border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200' : 
+                                            'border-gray-300 hover:border-blue-300 hover:bg-blue-50'">
+                                    <div class="text-center">
+                                        <div class="font-semibold" x-text="variant.size"></div>
+                                        <div class="text-xs mt-1" x-text="'Rp ' + new Intl.NumberFormat('id-ID').format(variant.price)"></div>
+                                    </div>
+                                </button>
+                            </template>
                         </div>
                     </div>
 
@@ -261,8 +264,8 @@
                             <button type="button"
                                     @click="addToCart"
                                     :disabled="isAddingToCart"
-                                    :class="isAddingToCart ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600'"
-                                    class="w-full flex items-center justify-center px-6 py-3 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                                    :class="isAddingToCart ? 'opacity-50 cursor-not-allowed bg-gray-400' : 'btn-primary-gradient hover-lift'"
+                                    class="w-full flex items-center justify-center px-6 py-3 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
                                 <svg x-show="!isAddingToCart" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5-5M7 13l-2.5 5M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z"/>
                                 </svg>
@@ -425,40 +428,143 @@
         </div>
     </div>
 
-    <!-- Kategori Serupa Section -->
+    <!-- Kategori Serupa - Therapeutic Oils Section -->
     <div class="container mx-auto px-4 py-8">
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Kategori Serupa</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Therapeutic Oils</h2>
+            <p class="text-gray-600">Koleksi minyak terapi premium untuk kesehatan dan relaksasi</p>
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            @for($i = 1; $i <= 4; $i++)
-            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
-                <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl overflow-hidden relative">
-                    <div class="w-full h-full flex items-center justify-center">
-                        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
+            <!-- Deep Sleep Oil -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card">
+                <div class="aspect-square bg-gradient-to-br from-purple-50 to-indigo-100 rounded-t-xl overflow-hidden relative">
+                    <img src="/images/DS-100-ml.jpg" alt="Deep Sleep Oil" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute top-3 left-3 bg-purple-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        Bestseller
                     </div>
                 </div>
                 
                 <div class="p-4 space-y-3">
                     <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-                        Produk {{ $i }}
+                        Deep Sleep Essential Oil
                     </h3>
+                    <p class="text-xs text-gray-500">Lavender & Chamomile blend untuk tidur nyenyak</p>
                     
                     <div class="flex items-center justify-between">
                         <div class="text-xl font-bold text-blue-600">
-                            Rp100.000
+                            Rp 89.000
+                        </div>
+                        <div class="flex text-yellow-400">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
                         </div>
                     </div>
                     
-                    <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                    <button class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover-lift">
                         Lihat Produk
                     </button>
                 </div>
             </div>
-            @endfor
+
+            <!-- Calming & Focus Oil -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card">
+                <div class="aspect-square bg-gradient-to-br from-green-50 to-emerald-100 rounded-t-xl overflow-hidden relative">
+                    <img src="/images/CNF-100-ml.jpg" alt="Calming & Focus Oil" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        New
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-3">
+                    <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        Calming & Focus Oil
+                    </h3>
+                    <p class="text-xs text-gray-500">Peppermint & Eucalyptus untuk konsentrasi optimal</p>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="text-xl font-bold text-blue-600">
+                            Rp 95.000
+                        </div>
+                        <div class="flex text-yellow-400">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover-lift">
+                        Lihat Produk
+                    </button>
+                </div>
+            </div>
+
+            <!-- Joy & Happiness Oil -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card">
+                <div class="aspect-square bg-gradient-to-br from-yellow-50 to-orange-100 rounded-t-xl overflow-hidden relative">
+                    <img src="/images/JOY-100-ml.jpg" alt="Joy & Happiness Oil" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                </div>
+                
+                <div class="p-4 space-y-3">
+                    <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        Joy & Happiness Oil
+                    </h3>
+                    <p class="text-xs text-gray-500">Citrus blend untuk mood positif sepanjang hari</p>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="text-xl font-bold text-blue-600">
+                            Rp 88.000
+                        </div>
+                        <div class="flex text-yellow-400">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover-lift">
+                        Lihat Produk
+                    </button>
+                </div>
+            </div>
+
+            <!-- Immune Booster Oil -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card">
+                <div class="aspect-square bg-gradient-to-br from-red-50 to-pink-100 rounded-t-xl overflow-hidden relative">
+                    <img src="/images/IB-100-ml.jpg" alt="Immune Booster Oil" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                </div>
+                
+                <div class="p-4 space-y-3">
+                    <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        Immune Booster Oil
+                    </h3>
+                    <p class="text-xs text-gray-500">Tea Tree & Oregano untuk daya tahan tubuh</p>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="text-xl font-bold text-blue-600">
+                            Rp 92.000
+                        </div>
+                        <div class="flex text-yellow-400">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
+                        </div>
+                    </div>
+                    
+                    <button class="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 hover-lift">
+                        Lihat Produk
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -467,20 +573,36 @@
     <div class="container mx-auto px-4 py-12">
         <div class="text-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Produk Lainnya</h2>
+            @if($product->category)
+            <p class="text-gray-600">Produk serupa dalam kategori <span class="font-semibold text-blue-600">{{ $product->category->category_name }}</span></p>
+            @endif
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($relatedProducts as $relatedProduct)
-            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card">
                 <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl overflow-hidden relative">
                     @if($relatedProduct->image_url)
                         <img src="{{ $relatedProduct->image_url }}" alt="{{ $relatedProduct->name_item }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     @else
-                        <div class="w-full h-full flex items-center justify-center">
-                            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
+                        <!-- Generate image based on product name pattern -->
+                        @php
+                            $productName = strtolower($relatedProduct->name_item);
+                            $imageCode = 'placeholder';
+                            
+                            if (str_contains($productName, 'deep sleep')) $imageCode = 'DS-100-ml';
+                            elseif (str_contains($productName, 'calming') || str_contains($productName, 'focus')) $imageCode = 'CNF-100-ml';
+                            elseif (str_contains($productName, 'joy') || str_contains($productName, 'happiness')) $imageCode = 'JOY-100-ml';
+                            elseif (str_contains($productName, 'immune') || str_contains($productName, 'booster')) $imageCode = 'IB-100-ml';
+                            elseif (str_contains($productName, 'baby')) $imageCode = 'BB-100-ml';
+                            elseif (str_contains($productName, 'good feeling')) $imageCode = 'GF-100-ml';
+                            elseif (str_contains($productName, 'massage your baby')) $imageCode = 'MYB-100-ml';
+                            elseif (str_contains($productName, 'love') || str_contains($productName, 'dream')) $imageCode = 'LDR-100-ml';
+                            elseif (str_contains($productName, 'total care')) $imageCode = 'TC-100-ml';
+                            
+                            $imagePath = $imageCode !== 'placeholder' ? "/images/{$imageCode}.jpg" : "/images/placeholder.jpg";
+                        @endphp
+                        <img src="{{ $imagePath }}" alt="{{ $relatedProduct->name_item }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     @endif
                     
                     <!-- Quick View Button -->
@@ -490,6 +612,17 @@
                             Lihat Detail
                         </a>
                     </div>
+                    
+                    <!-- Stock Badge -->
+                    @if($relatedProduct->stock <= 5 && $relatedProduct->stock > 0)
+                    <div class="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        Stok Terbatas
+                    </div>
+                    @elseif($relatedProduct->stock > 20)
+                    <div class="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        Stok Banyak
+                    </div>
+                    @endif
                 </div>
                 
                 <div class="p-4 space-y-3">
@@ -503,15 +636,35 @@
                         {{ $relatedProduct->name_item }}
                     </h3>
                     
+                    <!-- Product Description -->
+                    @if($relatedProduct->description_item)
+                    <p class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($relatedProduct->description_item, 60) }}</p>
+                    @endif
+                    
                     <div class="flex items-center justify-between">
                         <div class="text-xl font-bold text-blue-600">
                             Rp {{ number_format($relatedProduct->sell_price, 0, ',', '.') }}
                         </div>
+                        <div class="flex text-yellow-400">
+                            @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            @endfor
+                        </div>
                     </div>
                     
-                    <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                    <!-- Stock Info -->
+                    <div class="text-xs text-gray-500">
+                        Stok: <span class="font-medium {{ $relatedProduct->stock > 0 ? 'text-green-600' : 'text-red-600' }}">
+                            {{ $relatedProduct->stock > 0 ? $relatedProduct->stock . ' tersedia' : 'Habis' }}
+                        </span>
+                    </div>
+                    
+                    <a href="{{ route('product.detail', $relatedProduct->item_id) }}" 
+                       class="block w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 text-center">
                         Lihat Produk
-                    </button>
+                    </a>
                 </div>
             </div>
             @endforeach
@@ -571,19 +724,9 @@
 function productDetail() {
     return {
         selectedImageIndex: 0,
-        productImages: [
-            @if($product->image_url)
-                '{{ $product->image_url }}',
-                '{{ $product->image_url }}',
-                '{{ $product->image_url }}',
-                '{{ $product->image_url }}'
-            @else
-                '/images/placeholder.jpg',
-                '/images/placeholder.jpg',
-                '/images/placeholder.jpg',
-                '/images/placeholder.jpg'
-            @endif
-        ],
+        selectedVariantIndex: 0,
+        productImages: [],
+        productVariants: [],
         quantity: 1,
         isLiked: false,
         isAddingToCart: false,
@@ -596,11 +739,74 @@ function productDetail() {
         
         // Initialize component
         init() {
-            // Component initialized
+            this.generateProductVariants();
+        },
+        
+        // Generate product variants based on product name pattern
+        generateProductVariants() {
+            const productName = '{{ $product->name_item }}';
+            let baseCode = '';
+            
+            // Determine product code based on name patterns
+            if (productName.toLowerCase().includes('deep sleep')) {
+                baseCode = 'DS';
+            } else if (productName.toLowerCase().includes('calming') || productName.toLowerCase().includes('focus')) {
+                baseCode = 'CNF';
+            } else if (productName.toLowerCase().includes('joy') || productName.toLowerCase().includes('happiness')) {
+                baseCode = 'JOY';
+            } else if (productName.toLowerCase().includes('immune') || productName.toLowerCase().includes('booster')) {
+                baseCode = 'IB';
+            } else if (productName.toLowerCase().includes('baby')) {
+                baseCode = 'BB';
+            } else if (productName.toLowerCase().includes('good feeling')) {
+                baseCode = 'GF';
+            } else if (productName.toLowerCase().includes('massage your baby')) {
+                baseCode = 'MYB';
+            } else if (productName.toLowerCase().includes('love & dream')) {
+                baseCode = 'LDR';
+            } else if (productName.toLowerCase().includes('total care')) {
+                baseCode = 'TC';
+            } else {
+                // Default fallback - use DS as example
+                baseCode = 'DS';
+            }
+            
+            // Define variants for each size
+            const sizes = ['10-ml', '30-ml', '100-ml', '250-ml'];
+            
+            this.productVariants = sizes.map(size => ({
+                name: `${productName} ${size.replace('-', ' ').toUpperCase()}`,
+                size: size.replace('-', ' ').toUpperCase(),
+                image: `/images/${baseCode}-${size}.jpg`,
+                code: `${baseCode}-${size}`,
+                price: this.calculateVariantPrice(size)
+            }));
+            
+            // Set product images array for compatibility
+            this.productImages = this.productVariants.map(variant => variant.image);
+        },
+        
+        // Calculate price based on size
+        calculateVariantPrice(size) {
+            const basePrice = {{ $product->sell_price }};
+            switch(size) {
+                case '10-ml': return Math.round(basePrice * 0.4);
+                case '30-ml': return Math.round(basePrice * 0.7);
+                case '100-ml': return basePrice;
+                case '250-ml': return Math.round(basePrice * 2.2);
+                default: return basePrice;
+            }
         },
         
         // Select image function
         selectImage(index) {
+            this.selectedImageIndex = index;
+            this.selectedVariantIndex = index;
+        },
+        
+        // Select variant function
+        selectVariant(index) {
+            this.selectedVariantIndex = index;
             this.selectedImageIndex = index;
         },
         
@@ -619,9 +825,12 @@ function productDetail() {
             this.isAddingToCart = true;
             
             try {
+                const selectedVariant = this.productVariants[this.selectedVariantIndex];
                 const requestData = {
                     item_id: {{ $product->item_id }},
-                    quantity: this.quantity
+                    quantity: this.quantity,
+                    variant: selectedVariant.code,
+                    variant_name: selectedVariant.name
                 };
                 
                 const response = await fetch('/cart/add', {
@@ -636,7 +845,7 @@ function productDetail() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    this.showNotification('Produk berhasil ditambahkan ke keranjang!', 'success');
+                    this.showNotification(`${selectedVariant.name} berhasil ditambahkan ke keranjang!`, 'success');
                     
                     // Update cart count using global cart counter
                     if (window.CartCounter && data.cart_count !== undefined) {
@@ -688,5 +897,115 @@ function productDetail() {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.variant-thumbnail {
+    transition: all 0.2s ease-in-out;
+}
+
+.variant-thumbnail:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.variant-thumbnail.selected {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.product-card {
+    transition: all 0.3s ease-in-out;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.therapeutic-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.price-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.image-overlay {
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%);
+}
+
+.product-badge {
+    backdrop-filter: blur(10px);
+}
+
+/* Animation for notifications */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-enter {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* Scrollbar styling for variant thumbnails */
+.variant-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.variant-scroll::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 2px;
+}
+
+.variant-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+.variant-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Loading state for images */
+.image-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+}
+
+/* Custom button styles */
+.btn-primary-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-primary-gradient:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 </style>
