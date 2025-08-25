@@ -159,27 +159,149 @@
                 <!-- Products Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     @forelse($products as $product)
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card"
+                             x-data="{ 
+                                selectedVariant: 0,
+                                variants: [],
+                                init() {
+                                    this.generateVariants('{{ addslashes($product->name_item) }}');
+                                },
+                                generateVariants(productName) {
+                                    const lowerName = productName.toLowerCase();
+                                    let baseCode = 'placeholder';
+                                    
+                                    // Map product names to image codes
+                                    if (lowerName.includes('deep sleep') || lowerName.includes('ds ')) {
+                                        baseCode = 'DS';
+                                    } else if (lowerName.includes('cough n flu') || lowerName.includes('cough') || lowerName.includes('cnf ')) {
+                                        baseCode = 'CNF';
+                                    } else if (lowerName.includes('joy') && !lowerName.includes('enjoy')) {
+                                        baseCode = 'JOY';
+                                    } else if (lowerName.includes('immboost') || lowerName.includes('imboost') || lowerName.includes('immunity') || lowerName.includes('ib ')) {
+                                        baseCode = 'IB';
+                                    } else if (lowerName.includes('bye bugs') || lowerName.includes('bb ')) {
+                                        baseCode = 'BB';
+                                    } else if (lowerName.includes('gimme food') || lowerName.includes('gf ')) {
+                                        baseCode = 'GF';
+                                    } else if (lowerName.includes('message your baby') || lowerName.includes('myb ')) {
+                                        baseCode = 'MYB';
+                                    } else if (lowerName.includes('ldr booster') || lowerName.includes('ldr ')) {
+                                        baseCode = 'LDR';
+                                    } else if (lowerName.includes('tummy calm') || lowerName.includes('tummy calmer') || lowerName.includes('tc ')) {
+                                        baseCode = 'TC';
+                                    } else if (lowerName.includes('twin pack newborn') || lowerName.includes('tp newborn') || lowerName.includes('tp-nb')) {
+                                        baseCode = 'TP-NB';
+                                    } else if (lowerName.includes('twin pack common cold') || lowerName.includes('tp common cold') || lowerName.includes('tp-cc')) {
+                                        baseCode = 'TP-CC';
+                                    } else if (lowerName.includes('twin pack travel') || lowerName.includes('tp travel') || lowerName.includes('tp-tv')) {
+                                        baseCode = 'TP-TV';
+                                    }
+                                    
+                                    if (baseCode !== 'placeholder' && !baseCode.includes('TP-')) {
+                                        // Generate variants for different sizes
+                                        this.variants = [
+                                            { size: '10ml', image: `/images/${baseCode}-10-ml.jpg`, price: {{ $product->sell_price }} * 0.4 },
+                                            { size: '30ml', image: `/images/${baseCode}-30-ml.jpg`, price: {{ $product->sell_price }} * 0.7 },
+                                            { size: '100ml', image: `/images/${baseCode}-100-ml.jpg`, price: {{ $product->sell_price }} },
+                                            { size: '250ml', image: `/images/${baseCode}-250-ml.jpg`, price: {{ $product->sell_price }} * 2.2 }
+                                        ];
+                                    } else {
+                                        // For twin packs or other products without size variants
+                                        this.variants = [
+                                            { size: 'Standard', image: baseCode !== 'placeholder' ? `/images/${baseCode}.jpg` : '/images/placeholder.jpg', price: {{ $product->sell_price }} }
+                                        ];
+                                    }
+                                }
+                             }">
                             <!-- Product Image -->
-                            <div class="aspect-square bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
-                                <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
+                            <div class="aspect-square bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center relative overflow-hidden">
+                                <!-- Product Image based on variant -->
+                                <template x-if="variants.length > 0">
+                                    <img :src="variants[selectedVariant]?.image || '/images/placeholder.jpg'" 
+                                         :alt="'{{ $product->name_item }} ' + (variants[selectedVariant]?.size || '')" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                </template>
+                                
+                                <!-- Fallback placeholder -->
+                                <template x-if="variants.length === 0">
+                                    <svg class="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </template>
+                                
+                                <!-- Size indicator -->
+                                <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium text-gray-900"
+                                     x-show="variants.length > 0"
+                                     x-text="variants[selectedVariant]?.size || 'Standard'">
+                                </div>
+                                
+                                <!-- Thumbnail navigation for size variants -->
+                                <div class="absolute bottom-2 left-2 right-2" x-show="variants.length > 1">
+                                    <div class="flex justify-center space-x-1">
+                                        <template x-for="(variant, index) in variants" :key="index">
+                                            <button @click="selectedVariant = index"
+                                                    class="w-6 h-6 rounded-sm overflow-hidden border transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                                                    :class="selectedVariant === index ? 'border-blue-500 ring-1 ring-blue-300' : 'border-white/50 hover:border-blue-300'">
+                                                <img :src="variant.image" :alt="variant.size" class="w-full h-full object-cover">
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                                
+                                <!-- Stock Badge -->
+                                @if($product->stock <= 5 && $product->stock > 0)
+                                <div class="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                    Stok Terbatas
+                                </div>
+                                @elseif($product->stock > 20)
+                                <div class="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                    Stok Banyak
+                                </div>
+                                @elseif($product->stock == 0)
+                                <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                    Habis
+                                </div>
+                                @endif
                             </div>
                             
                             <!-- Product Info -->
                             <div class="p-4">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                                @if($product->category)
+                                <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mb-2">
+                                    {{ $product->category->category_name }}
+                                </span>
+                                @endif
+                                
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                                     {{ $product->name_item }}
                                 </h3>
                                 
-                                <div class="text-2xl font-bold text-blue-600 mb-4">
-                                    Rp{{ number_format($product->sell_price, 0, ',', '.') }}
+                                <!-- Current variant size display -->
+                                <div class="text-sm text-gray-600 mb-2" x-show="variants.length > 0">
+                                    Ukuran: <span class="font-medium" x-text="variants[selectedVariant]?.size || 'Standard'"></span>
+                                </div>
+                                
+                                <!-- Dynamic price based on selected variant -->
+                                <div class="text-2xl font-bold text-blue-600 mb-2">
+                                    <span x-show="variants.length > 0" x-text="'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(variants[selectedVariant]?.price || {{ $product->sell_price }}))"></span>
+                                    <span x-show="variants.length === 0">Rp{{ number_format($product->sell_price, 0, ',', '.') }}</span>
+                                </div>
+                                
+                                <!-- Available sizes indicator -->
+                                <div class="text-xs text-gray-500 mb-3" x-show="variants.length > 1">
+                                    <span x-text="variants.length + ' ukuran tersedia'"></span>
+                                </div>
+                                
+                                <!-- Stock Info -->
+                                <div class="text-sm text-gray-600 mb-3">
+                                    Stok: <span class="font-medium {{ $product->stock > 0 ? 'text-green-600' : 'text-red-600' }}">
+                                        {{ $product->stock > 0 ? $product->stock . ' tersedia' : 'Habis' }}
+                                    </span>
                                 </div>
                                 
                                 <!-- Action Button -->
                                 <a href="{{ route('product.detail', $product->item_id) }}" 
-                                   class="w-full block bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+                                   class="w-full block bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
                                     Lihat Produk
                                 </a>
                             </div>
@@ -275,4 +397,75 @@
     
     @include('components.footer')
 </div>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-card {
+    transition: all 0.3s ease-in-out;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced thumbnail styles */
+.product-card .thumbnail-nav button {
+    transition: all 0.2s ease-in-out;
+    backdrop-filter: blur(8px);
+}
+
+.product-card .thumbnail-nav button:hover {
+    transform: scale(1.1);
+}
+
+.product-card .thumbnail-nav button.active {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Loading state for images */
+.image-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Smooth transitions for size changes */
+.product-card img {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Enhanced hover effects */
+.product-card:hover .size-indicator {
+    transform: scale(1.05);
+}
+
+.size-indicator {
+    transition: all 0.2s ease-in-out;
+    backdrop-filter: blur(8px);
+}
+
+/* Price change animation */
+.price-change {
+    animation: priceChange 0.3s ease-in-out;
+}
+
+@keyframes priceChange {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+</style>
 @endsection

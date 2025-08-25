@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_items', function (Blueprint $table) {
-            $table->id('order_item_id');
-            $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('item_id');
-            $table->string('item_name');
-            $table->decimal('item_price', 10, 2);
-            $table->integer('quantity');
-            $table->decimal('subtotal', 10, 2);
-            $table->timestamps();
-            
-            $table->foreign('order_id')->references('order_id')->on('orders')->onDelete('cascade');
-            $table->foreign('item_id')->references('item_id')->on('master_items')->onDelete('cascade');
-        });
+        if (!Schema::hasTable('order_items')) {
+            Schema::create('order_items', function (Blueprint $table) {
+                $table->id('order_item_id');
+                $table->unsignedBigInteger('order_id');
+                $table->unsignedBigInteger('item_id');
+                $table->string('item_name');
+                $table->decimal('item_price', 10, 2);
+                $table->integer('quantity');
+                $table->decimal('subtotal', 10, 2);
+                $table->timestamps();
+                
+                $table->foreign('order_id')->references('order_id')->on('orders')->onDelete('cascade');
+                $table->foreign('item_id')->references('item_id')->on('master_items')->onDelete('cascade');
+            });
+        }
     }
 
     /**

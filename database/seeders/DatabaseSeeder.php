@@ -15,14 +15,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create or update test user if it doesn't exist
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => bcrypt('password'),
+            ]
+        );
 
         // Call other seeders
         $this->call([
             UserSeeder::class,
+            AdminUserSeeder::class,
             MasterItemSeeder::class,
             TransactionSalesSeeder::class,
         ]);

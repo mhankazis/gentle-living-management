@@ -14,14 +14,14 @@ This implementation adds comprehensive image functionality to the product detail
 ### 2. Product Name Pattern Recognition
 The system automatically detects product types based on name patterns:
 - **Deep Sleep** → DS (DS-10-ml.jpg, DS-30-ml.jpg, etc.)
-- **Calming & Focus** → CNF
-- **Joy & Happiness** → JOY
-- **Immune Booster** → IB
-- **Baby** → BB
-- **Good Feeling** → GF
+- **Cough n flu** → CNF
+- **Joy** → JOY
+- **ImBoos** → IB
+- **Bye bugs** → BB
+- **Gimme Food** → GF
 - **Massage Your Baby** → MYB
-- **Love & Dream** → LDR
-- **Total Care** → TC
+- **Ldr booster** → LDR
+- **Tummy calmer** → TC
 
 ### 3. Therapeutic Oils Section
 Enhanced "Kategori Serupa" section specifically for Therapeutic Oils category:

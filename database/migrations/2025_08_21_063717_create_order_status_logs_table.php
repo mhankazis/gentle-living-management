@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_status_logs', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('transaction_sales_id');
-            $table->string('old_status', 50);
-            $table->string('new_status', 50);
-            $table->unsignedBigInteger('changed_by');
-            $table->text('notes')->nullable();
-            $table->timestamps();
-            
-            $table->foreign('transaction_sales_id')->references('transaction_sales_id')->on('transaction_sales')->onDelete('cascade');
-            $table->index(['transaction_sales_id', 'created_at']);
-        });
+        if (!Schema::hasTable('order_status_logs')) {
+            Schema::create('order_status_logs', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('transaction_sales_id');
+                $table->string('old_status', 50);
+                $table->string('new_status', 50);
+                $table->unsignedBigInteger('changed_by');
+                $table->text('notes')->nullable();
+                $table->timestamps();
+                
+                $table->foreign('transaction_sales_id')->references('id')->on('transaction_sales')->onDelete('cascade');
+                $table->index(['transaction_sales_id', 'created_at']);
+            });
+        }
     }
 
     /**

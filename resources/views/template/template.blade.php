@@ -307,15 +307,15 @@
                 <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
                     <div class="relative overflow-hidden rounded-t-lg">
                         <img
-                            src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=300&h=300&fit=crop"
-                            alt="Minyak Telon Bayi Premium"
+                            src="/images/CNF-10-ml.jpg"
+                            alt="Gentle Baby Cough n Flu"
                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         
                         <!-- Badges -->
                         <div class="absolute top-2 left-2 flex flex-col gap-1">
                             <span class="bg-baby-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                Baru
+                                Herbal
                             </span>
                             <span class="bg-primary text-white text-xs px-2 py-1 rounded-full">
                                 Sale
@@ -326,6 +326,15 @@
                         <button class="absolute top-2 right-2 bg-white/80 hover:bg-white p-2 rounded-full">
                             <i data-lucide="heart" class="h-4 w-4"></i>
                         </button>
+                        
+                        <!-- Thumbnail indicator untuk menunjukkan ada varian ukuran -->
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1">
+                            <div class="flex space-x-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-green-300 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-green-200 rounded-full"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-4 space-y-3">
@@ -343,12 +352,12 @@
 
                         <!-- Product Name -->
                         <h3 class="font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem]">
-                            Minyak Telon Bayi Premium
+                            Gentle Baby Cough n Flu
                         </h3>
 
                         <!-- Description -->
                         <p class="text-sm text-gray-600 line-clamp-2">
-                            Minyak telon tradisional dengan formula alami untuk menghangatkan tubuh bayi
+                            Minyak bayi herbal untuk meredakan batuk dan flu secara alami
                         </p>
 
                         <!-- Price -->
@@ -374,15 +383,31 @@
                 <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
                     <div class="relative overflow-hidden rounded-t-lg">
                         <img
-                            src="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=300&h=300&fit=crop"
-                            alt="Baby Oil Chamomile Extract"
+                            src="/images/DS-10-ml.jpg"
+                            alt="Gentle Baby Deep Sleep"
                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
+                        
+                        <!-- Badges -->
+                        <div class="absolute top-2 left-2 flex flex-col gap-1">
+                            <span class="bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
+                                Bestseller
+                            </span>
+                        </div>
                         
                         <!-- Wishlist Button -->
                         <button class="absolute top-2 right-2 bg-white/80 hover:bg-white p-2 rounded-full">
                             <i data-lucide="heart" class="h-4 w-4"></i>
                         </button>
+                        
+                        <!-- Thumbnail indicator untuk menunjukkan ada varian ukuran -->
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1">
+                            <div class="flex space-x-1">
+                                <div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-purple-300 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-purple-200 rounded-full"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-4 space-y-3">
@@ -400,12 +425,12 @@
 
                         <!-- Product Name -->
                         <h3 class="font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem]">
-                            Baby Oil Chamomile Extract
+                            Gentle Baby Deep Sleep
                         </h3>
 
                         <!-- Description -->
                         <p class="text-sm text-gray-600 line-clamp-2">
-                            Minyak bayi dengan ekstrak chamomile untuk kulit sensitif dan mudah iritasi
+                            Minyak bayi aromaterapi untuk membantu bayi tidur nyenyak dan tenang
                         </p>
 
                         <!-- Price -->
@@ -428,15 +453,15 @@
                 <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
                     <div class="relative overflow-hidden rounded-t-lg">
                         <img
-                            src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=300&h=300&fit=crop"
-                            alt="Minyak Kemiri Bayi Organik"
+                            src="/images/JOY-10-ml.jpg"
+                            alt="Gentle Baby Joy"
                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         
                         <!-- Badges -->
                         <div class="absolute top-2 left-2 flex flex-col gap-1">
-                            <span class="bg-primary text-white text-xs px-2 py-1 rounded-full">
-                                Sale
+                            <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
+                                Popular
                             </span>
                         </div>
 
@@ -444,6 +469,15 @@
                         <button class="absolute top-2 right-2 bg-white/80 hover:bg-white p-2 rounded-full">
                             <i data-lucide="heart" class="h-4 w-4"></i>
                         </button>
+                        
+                        <!-- Thumbnail indicator untuk menunjukkan ada varian ukuran -->
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1">
+                            <div class="flex space-x-1">
+                                <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-yellow-300 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-yellow-200 rounded-full"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-4 space-y-3">
@@ -461,12 +495,12 @@
 
                         <!-- Product Name -->
                         <h3 class="font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem]">
-                            Minyak Kemiri Bayi Organik
+                            Gentle Baby Joy
                         </h3>
 
                         <!-- Description -->
                         <p class="text-sm text-gray-600 line-clamp-2">
-                            Minyak kemiri murni untuk merawat dan menguatkan rambut bayi secara alami
+                            Minyak bayi dengan aroma citrus untuk mengatasi bayi rewel dan cemas
                         </p>
 
                         <!-- Price -->
@@ -492,15 +526,15 @@
                 <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
                     <div class="relative overflow-hidden rounded-t-lg">
                         <img
-                            src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=300&h=300&fit=crop"
-                            alt="Baby Massage Oil Lavender"
+                            src="/images/MYB-10-ml.jpg"
+                            alt="Gentle Baby Massage Your Baby"
                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         
                         <!-- Badges -->
                         <div class="absolute top-2 left-2 flex flex-col gap-1">
                             <span class="bg-baby-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                Baru
+                                Massage
                             </span>
                         </div>
 
@@ -508,6 +542,15 @@
                         <button class="absolute top-2 right-2 bg-white/80 hover:bg-white p-2 rounded-full">
                             <i data-lucide="heart" class="h-4 w-4"></i>
                         </button>
+                        
+                        <!-- Thumbnail indicator untuk menunjukkan ada varian ukuran -->
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1">
+                            <div class="flex space-x-1">
+                                <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-blue-300 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-blue-200 rounded-full"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-4 space-y-3">
@@ -525,12 +568,12 @@
 
                         <!-- Product Name -->
                         <h3 class="font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem]">
-                            Baby Massage Oil Lavender
+                            Gentle Baby Massage Your Baby
                         </h3>
 
                         <!-- Description -->
                         <p class="text-sm text-gray-600 line-clamp-2">
-                            Minyak pijat bayi dengan aroma lavender untuk relaksasi dan tidur nyenyak
+                            Minyak pijat khusus bayi dengan formula lembut untuk meningkatkan ikatan emosional
                         </p>
 
                         <!-- Price -->
@@ -553,15 +596,31 @@
                 <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
                     <div class="relative overflow-hidden rounded-t-lg">
                         <img
-                            src="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=300&h=300&fit=crop"
-                            alt="Minyak Zaitun Bayi Extra Virgin"
+                            src="/images/IB-10-ml.jpg"
+                            alt="Gentle Baby Immboost"
                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
+                        
+                        <!-- Badges -->
+                        <div class="absolute top-2 left-2 flex flex-col gap-1">
+                            <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                Health
+                            </span>
+                        </div>
                         
                         <!-- Wishlist Button -->
                         <button class="absolute top-2 right-2 bg-white/80 hover:bg-white p-2 rounded-full">
                             <i data-lucide="heart" class="h-4 w-4"></i>
                         </button>
+                        
+                        <!-- Thumbnail indicator untuk menunjukkan ada varian ukuran -->
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1">
+                            <div class="flex space-x-1">
+                                <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-red-300 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-red-200 rounded-full"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-4 space-y-3">
@@ -579,12 +638,12 @@
 
                         <!-- Product Name -->
                         <h3 class="font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem]">
-                            Minyak Zaitun Bayi Extra Virgin
+                            Gentle Baby Immboost
                         </h3>
 
                         <!-- Description -->
                         <p class="text-sm text-gray-600 line-clamp-2">
-                            Minyak zaitun extra virgin yang kaya nutrisi untuk melembabkan kulit bayi
+                            Minyak bayi essential oil untuk meningkatkan daya tahan tubuh anak
                         </p>
 
                         <!-- Price -->
@@ -607,15 +666,15 @@
                 <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">
                     <div class="relative overflow-hidden rounded-t-lg">
                         <img
-                            src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=300&h=300&fit=crop"
-                            alt="Baby Oil Aloe Vera & Vitamin E"
+                            src="/images/BB-10-ml.jpg"
+                            alt="Gentle Baby Bye Bugs"
                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         
                         <!-- Badges -->
                         <div class="absolute top-2 left-2 flex flex-col gap-1">
-                            <span class="bg-primary text-white text-xs px-2 py-1 rounded-full">
-                                Sale
+                            <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                                Natural
                             </span>
                         </div>
 
@@ -623,6 +682,15 @@
                         <button class="absolute top-2 right-2 bg-white/80 hover:bg-white p-2 rounded-full">
                             <i data-lucide="heart" class="h-4 w-4"></i>
                         </button>
+                        
+                        <!-- Thumbnail indicator untuk menunjukkan ada varian ukuran -->
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1">
+                            <div class="flex space-x-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-green-300 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-green-200 rounded-full"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-4 space-y-3">
@@ -640,12 +708,12 @@
 
                         <!-- Product Name -->
                         <h3 class="font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem]">
-                            Baby Oil Aloe Vera & Vitamin E
+                            Gentle Baby Bye Bugs
                         </h3>
 
                         <!-- Description -->
                         <p class="text-sm text-gray-600 line-clamp-2">
-                            Minyak bayi dengan aloe vera dan vitamin E untuk kulit lembut dan sehat
+                            Minyak bayi alami untuk mengusir nyamuk dan serangga secara aman
                         </p>
 
                         <!-- Price -->

@@ -9,16 +9,21 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionSales extends Model
 {
-    protected $primaryKey = 'transaction_sales_id';
+    // Primary key menggunakan default 'id' sesuai migrasi
     
     protected $fillable = [
-        'branch_id',
-        'payment_method_id',
+        'transaction_code',
         'user_id',
-        'customer_id',
-        'sales_type_id',
-        'number',
-        'date',
+        'total_amount',
+        'tax_amount',
+        'discount_amount',
+        'final_amount',
+        'status',
+        'payment_status',
+        'payment_method',
+        'customer_name',
+        'customer_phone',
+        'customer_address',
         'notes',
         'admin_notes',
         'payment_notes',
@@ -26,18 +31,7 @@ class TransactionSales extends Model
         'payment_updated_by',
         'status_updated_at',
         'payment_updated_at',
-        'subtotal',
-        'discount_amount',
-        'discount_percentage',
-        'total_amount',
-        'paid_amount',
-        'change_amount',
-        'whatsapp',
-        'status',
-        'payment_status',
-        'customer_name',
-        'customer_phone',
-        'customer_address',
+        'transaction_date',
         'cancellation_requested_at'
     ];
 
@@ -61,7 +55,7 @@ class TransactionSales extends Model
     // Relationship dengan detail transaksi
     public function details(): HasMany
     {
-        return $this->hasMany(TransactionSalesDetail::class, 'transaction_sales_id', 'transaction_sales_id');
+        return $this->hasMany(TransactionSalesDetail::class, 'transaction_sales_id', 'id');
     }
 
     // Generate transaction number

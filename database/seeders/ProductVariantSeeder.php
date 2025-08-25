@@ -42,7 +42,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'Calming & Focus Essential Oil',
+                'name_item' => 'Cough n flu Essential Oil',
                 'description_item' => 'Perpaduan peppermint dan eucalyptus untuk meningkatkan fokus dan konsentrasi. Ideal untuk produktivitas dan mengurangi stress mental.',
                 'ingredient_item' => 'Peppermint Oil, Eucalyptus Oil, Rosemary Oil, Lemon Oil',
                 'netweight_item' => '100ml',
@@ -53,7 +53,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'Joy & Happiness Essential Oil',
+                'name_item' => 'Joy Essential Oil',
                 'description_item' => 'Citrus blend yang menyegarkan untuk meningkatkan mood dan energi positif. Memberikan perasaan bahagia dan optimis sepanjang hari.',
                 'ingredient_item' => 'Sweet Orange Oil, Lemon Oil, Grapefruit Oil, Ylang Ylang Oil',
                 'netweight_item' => '100ml',
@@ -64,7 +64,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'Immune Booster Essential Oil',
+                'name_item' => 'Imboost Essential Oil',
                 'description_item' => 'Kombinasi tea tree dan oregano untuk meningkatkan daya tahan tubuh. Membantu melindungi dari infeksi dan memperkuat sistem imun.',
                 'ingredient_item' => 'Tea Tree Oil, Oregano Oil, Thyme Oil, Clove Oil',
                 'netweight_item' => '100ml',
@@ -75,7 +75,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'Good Feeling Essential Oil',
+                'name_item' => 'Gimme food Essential Oil',
                 'description_item' => 'Aromaterapi untuk menciptakan suasana hati yang baik dan mengurangi kecemasan. Memberikan rasa tenang dan kebahagiaan.',
                 'ingredient_item' => 'Geranium Oil, Rose Oil, Sandalwood Oil, Frankincense Oil',
                 'netweight_item' => '100ml',
@@ -86,7 +86,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'Love & Dream Essential Oil',
+                'name_item' => 'Ldr booster Essential Oil',
                 'description_item' => 'Blend romantis untuk menciptakan suasana hangat dan mimpi indah. Cocok untuk relaksasi bersama pasangan.',
                 'ingredient_item' => 'Rose Oil, Jasmine Oil, Patchouli Oil, Vanilla Oil',
                 'netweight_item' => '100ml',
@@ -97,7 +97,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'Total Care Essential Oil',
+                'name_item' => 'Tummy calmer Essential Oil',
                 'description_item' => 'Essential oil serbaguna untuk perawatan menyeluruh. Kombinasi berbagai minyak terbaik untuk kesehatan optimal.',
                 'ingredient_item' => 'Lavender Oil, Tea Tree Oil, Eucalyptus Oil, Lemon Oil',
                 'netweight_item' => '100ml',
@@ -138,7 +138,7 @@ class ProductVariantSeeder extends Seeder
         // Sample TopCare products
         $topCareProducts = [
             [
-                'name_item' => 'TopCare Complete Care',
+                'name_item' => 'Twin pack new born',
                 'description_item' => 'Perawatan komprehensif untuk kebutuhan sehari-hari. Produk multifungsi dengan kualitas premium.',
                 'ingredient_item' => 'Natural Extract, Vitamin Complex, Mineral Blend',
                 'netweight_item' => '150ml',
@@ -149,7 +149,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'TopCare Natural Boost',
+                'name_item' => 'Twin pack common cold',
                 'description_item' => 'Booster alami untuk meningkatkan vitalitas dan kesehatan. Formula khusus dengan bahan-bahan terpilih.',
                 'ingredient_item' => 'Ginseng Extract, Royal Jelly, Honey, Herbal Blend',
                 'netweight_item' => '120ml',
@@ -160,7 +160,7 @@ class ProductVariantSeeder extends Seeder
                 'unit_item' => 'Bottle',
             ],
             [
-                'name_item' => 'TopCare Total Vitality',
+                'name_item' => 'Twin pack travel pack',
                 'description_item' => 'Suplemen untuk vitalitas total dengan kombinasi vitamin dan mineral esensial. Mendukung kesehatan optimal.',
                 'ingredient_item' => 'Multivitamin, Mineral Complex, Antioxidant Blend',
                 'netweight_item' => '100ml',
