@@ -580,7 +580,7 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($relatedProducts as $relatedProduct)
-            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card">
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card {{ str_contains(strtolower($relatedProduct->name_item), 'twin pack') ? 'twin-pack-card' : '' }}">
                 <!-- Product Image with Enhanced Thumbnail -->
                 <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl overflow-hidden relative">
                     @php
@@ -588,8 +588,16 @@
                         $productName = strtolower($relatedProduct->name_item);
                         $imageCode = 'placeholder';
                         
-                        // More specific pattern matching
-                        if (str_contains($productName, 'deep sleep') || str_contains($productName, 'sleep')) {
+                        // Twin Pack products first (most specific)
+                        if (str_contains($productName, 'twin pack newborn') || str_contains($productName, 'twin pack essential')) {
+                            $imageCode = 'TP-NB';
+                        } elseif (str_contains($productName, 'twin pack common cold') || str_contains($productName, 'twin pack cold')) {
+                            $imageCode = 'TP-CC';
+                        } elseif (str_contains($productName, 'twin pack travel') || str_contains($productName, 'twin pack portable')) {
+                            $imageCode = 'TP-TV';
+                        } 
+                        // Single product patterns
+                        elseif (str_contains($productName, 'deep sleep') || str_contains($productName, 'sleep')) {
                             $imageCode = 'DS-100-ml';
                         } elseif (str_contains($productName, 'bye bugs') || str_contains($productName, 'bug')) {
                             $imageCode = 'BB-100-ml';
@@ -601,7 +609,7 @@
                             $imageCode = 'CNF-100-ml';
                         } elseif (str_contains($productName, 'joy') || str_contains($productName, 'happiness')) {
                             $imageCode = 'JOY-100-ml';
-                        } elseif (str_contains($productName, 'immune') || str_contains($productName, 'booster')) {
+                        } elseif (str_contains($productName, 'immune') || str_contains($productName, 'booster') || str_contains($productName, 'immboost')) {
                             $imageCode = 'IB-100-ml';
                         } elseif (str_contains($productName, 'baby') && !str_contains($productName, 'deep sleep')) {
                             $imageCode = 'BB-100-ml';
@@ -625,7 +633,11 @@
                          onerror="this.src='/images/placeholder.jpg'">
                     
                     <!-- Stock Status Badge -->
-                    @if($relatedProduct->stock <= 5 && $relatedProduct->stock > 0)
+                    @if(str_contains(strtolower($relatedProduct->name_item), 'twin pack'))
+                    <div class="absolute top-3 left-3 bg-purple-500 text-white px-2 py-1 rounded-full text-xs font-medium twin-pack-badge">
+                        Twin Pack
+                    </div>
+                    @elseif($relatedProduct->stock <= 5 && $relatedProduct->stock > 0)
                     <div class="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
                         Stok Terbatas
                     </div>
@@ -796,39 +808,61 @@ function productDetail() {
             let baseCode = '';
             
             // Determine product code based on name patterns
-            if (productName.toLowerCase().includes('deep sleep')) {
+            // Twin Pack products first (most specific)
+            if (productName.toLowerCase().includes('twin pack newborn') || productName.toLowerCase().includes('twin pack essential')) {
+                baseCode = 'TP-NB';
+            } else if (productName.toLowerCase().includes('twin pack common cold') || productName.toLowerCase().includes('twin pack cold')) {
+                baseCode = 'TP-CC';
+            } else if (productName.toLowerCase().includes('twin pack travel') || productName.toLowerCase().includes('twin pack portable')) {
+                baseCode = 'TP-TV';
+            } 
+            // Single product patterns
+            else if (productName.toLowerCase().includes('deep sleep')) {
                 baseCode = 'DS';
             } else if (productName.toLowerCase().includes('calming') || productName.toLowerCase().includes('focus')) {
                 baseCode = 'CNF';
             } else if (productName.toLowerCase().includes('joy') || productName.toLowerCase().includes('happiness')) {
                 baseCode = 'JOY';
-            } else if (productName.toLowerCase().includes('immune') || productName.toLowerCase().includes('booster')) {
+            } else if (productName.toLowerCase().includes('immune') || productName.toLowerCase().includes('booster') || productName.toLowerCase().includes('immboost')) {
                 baseCode = 'IB';
-            } else if (productName.toLowerCase().includes('baby')) {
+            } else if (productName.toLowerCase().includes('bye bugs') || productName.toLowerCase().includes('bug')) {
                 baseCode = 'BB';
+            } else if (productName.toLowerCase().includes('ldr booster') || productName.toLowerCase().includes('ldr')) {
+                baseCode = 'LDR';
+            } else if (productName.toLowerCase().includes('tummy calm') || productName.toLowerCase().includes('calm')) {
+                baseCode = 'TC';
             } else if (productName.toLowerCase().includes('good feeling')) {
                 baseCode = 'GF';
             } else if (productName.toLowerCase().includes('massage your baby')) {
                 baseCode = 'MYB';
-            } else if (productName.toLowerCase().includes('love & dream')) {
-                baseCode = 'LDR';
-            } else if (productName.toLowerCase().includes('total care')) {
-                baseCode = 'TC';
+            } else if (productName.toLowerCase().includes('baby')) {
+                baseCode = 'BB';
             } else {
                 // Default fallback - use DS as example
                 baseCode = 'DS';
             }
             
-            // Define variants for each size
-            const sizes = ['10-ml', '30-ml', '100-ml', '250-ml'];
-            
-            this.productVariants = sizes.map(size => ({
-                name: `${productName} ${size.replace('-', ' ').toUpperCase()}`,
-                size: size.replace('-', ' ').toUpperCase(),
-                image: `/images/${baseCode}-${size}.jpg`,
-                code: `${baseCode}-${size}`,
-                price: this.calculateVariantPrice(size)
-            }));
+            // Check if it's a twin pack product (only has one size)
+            if (baseCode.startsWith('TP-')) {
+                this.productVariants = [{
+                    name: productName,
+                    size: 'Twin Pack',
+                    image: `/images/${baseCode}.jpg`,
+                    code: baseCode,
+                    price: {{ $product->sell_price }}
+                }];
+            } else {
+                // Define variants for each size for regular products
+                const sizes = ['10-ml', '30-ml', '100-ml', '250-ml'];
+                
+                this.productVariants = sizes.map(size => ({
+                    name: `${productName} ${size.replace('-', ' ').toUpperCase()}`,
+                    size: size.replace('-', ' ').toUpperCase(),
+                    image: `/images/${baseCode}-${size}.jpg`,
+                    code: `${baseCode}-${size}`,
+                    price: this.calculateVariantPrice(size)
+                }));
+            }
             
             // Set product images array for compatibility
             this.productImages = this.productVariants.map(variant => variant.image);
@@ -1004,6 +1038,25 @@ function productDetail() {
     font-weight: 600;
     letter-spacing: 0.025em;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced twin pack styles */
+.twin-pack-badge {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+}
+
+.twin-pack-card {
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #8b5cf6, #a855f7) border-box;
+}
+
+.twin-pack-card:hover {
+    box-shadow: 0 25px 50px rgba(139, 92, 246, 0.25);
+    transform: translateY(-10px);
 }
 
 /* Enhanced button styles */

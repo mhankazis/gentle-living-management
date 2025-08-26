@@ -17,11 +17,11 @@ class MasterItemSeeder extends Seeder
 
         // Create categories first and store their IDs
         $categoryData = [
-            'Minyak Bayi',
-            'Aromaterapi', 
-            'Kesehatan',
-            'Perawatan Kulit',
-            'Essential Oil',
+            'Gentle Baby',
+            'Twin Pack',
+            'Nyam', 
+            'Mamina',
+            
         ];
 
         $categoryIds = [];
@@ -34,11 +34,11 @@ class MasterItemSeeder extends Seeder
         $items = [
             // Minyak Bayi
             [
-                'category_id' => $categoryIds['Minyak Bayi'],
+                'category_id' => $categoryIds['Gentle Baby'],
                 'name_item' => 'Gentle Baby Cough n Flu',
                 'description_item' => 'Minyak bayi yang membantu meredakan batuk dan flu pada anak bayi',
                 'ingredient_item' => 'Minyak Eucalyptus, Minyak Lavender, Minyak Kelapa',
-                'netweight_item' => '30ml',
+                'netweight_item' => '10ml',
                 'contain_item' => '1 botol minyak bayi',
                 'costprice_item' => 250000,
                 'sell_price' => 299000,
@@ -46,11 +46,11 @@ class MasterItemSeeder extends Seeder
                 'unit_item' => 'botol'
             ],
             [
-                'category_id' => $categoryIds['Minyak Bayi'],
+                'category_id' => $categoryIds['Gentle Baby'],
                 'name_item' => 'Gentle Baby Deep Sleep',
                 'description_item' => 'Minyak bayi untuk membantu bayi tidur nyenyak',
                 'ingredient_item' => 'Minyak Lavender, Minyak Chamomile, Minyak Kelapa',
-                'netweight_item' => '30ml',
+                'netweight_item' => '10ml',
                 'contain_item' => '1 botol minyak bayi',
                 'costprice_item' => 200000,
                 'sell_price' => 249000,
@@ -58,11 +58,11 @@ class MasterItemSeeder extends Seeder
                 'unit_item' => 'botol'
             ],
             [
-                'category_id' => $categoryIds['Minyak Bayi'],
+                'category_id' => $categoryIds['Gentle Baby'],
                 'name_item' => 'Gentle Baby Bye Bugs',
                 'description_item' => 'Minyak bayi yang mengusir nyamuk dan serangga dengan aman',
                 'ingredient_item' => 'Minyak Citronella, Minyak Lemongrass, Minyak Kelapa',
-                'netweight_item' => '30ml',
+                'netweight_item' => '10ml',
                 'contain_item' => '1 botol minyak bayi',
                 'costprice_item' => 40000,
                 'sell_price' => 49000,
@@ -70,11 +70,11 @@ class MasterItemSeeder extends Seeder
                 'unit_item' => 'botol'
             ],
             [
-                'category_id' => $categoryIds['Minyak Bayi'],
+                'category_id' => $categoryIds['Gentle Baby'],
                 'name_item' => 'Gentle Baby LDR Booster',
                 'description_item' => 'Minyak bayi dengan formula khusus untuk memperlancar ASI ibu hamil',
                 'ingredient_item' => 'Minyak Fennel, Minyak Ginger, Minyak Kelapa',
-                'netweight_item' => '50ml',
+                'netweight_item' => '10ml',
                 'contain_item' => '1 botol minyak bayi',
                 'costprice_item' => 500000,
                 'sell_price' => 599000,
@@ -82,44 +82,76 @@ class MasterItemSeeder extends Seeder
                 'unit_item' => 'botol'
             ],
             [
-                'category_id' => $categoryIds['Minyak Bayi'],
+                'category_id' => $categoryIds['Gentle Baby'],
                 'name_item' => 'Gentle Baby Tummy Calm',
                 'description_item' => 'Minyak bayi untuk meredakan kolik dan perut kembung',
                 'ingredient_item' => 'Minyak Fennel, Minyak Peppermint, Minyak Kelapa',
-                'netweight_item' => '30ml',
+                'netweight_item' => '10ml',
                 'contain_item' => '1 botol minyak bayi',
                 'costprice_item' => 180000,
                 'sell_price' => 220000,
                 'stock' => 12,
                 'unit_item' => 'botol'
             ],
-
-            // Aromaterapi
             [
-                'category_id' => $categoryIds['Aromaterapi'],
+                'category_id' => $categoryIds['Gentle Baby'],
                 'name_item' => 'Gentle Baby Joy',
                 'description_item' => 'Minyak bayi dengan aroma menenangkan untuk membantu atasi bayi rewel',
                 'ingredient_item' => 'Minyak Rose, Minyak Jasmine, Minyak Kelapa',
-                'netweight_item' => '30ml',
+                'netweight_item' => '10ml',
                 'contain_item' => '1 botol minyak bayi',
                 'costprice_item' => 150000,
                 'sell_price' => 189000,
                 'stock' => 12,
                 'unit_item' => 'botol'
             ],
-
-            // Kesehatan
             [
-                'category_id' => $categoryIds['Kesehatan'],
+                'category_id' => $categoryIds['Gentle Baby'],
                 'name_item' => 'Gentle Baby Immboost',
                 'description_item' => 'Minyak bayi untuk meningkatkan daya tahan tubuh dan kesehatan si kecil',
                 'ingredient_item' => 'Minyak Orange, Minyak Lemon, Minyak Kelapa',
-                'netweight_item' => '30ml',
+                'netweight_item' => '10ml',
                 'contain_item' => '1 botol minyak bayi',
                 'costprice_item' => 70000,
                 'sell_price' => 89000,
                 'stock' => 18,
                 'unit_item' => 'botol'
+            ],
+            [
+                'category_id' => $categoryIds['Gentle Baby'],
+                'name_item' => 'Twin Pack NewBorn Essential',
+                'description_item' => 'Paket twin pack untuk bayi baru lahir berisi 2 minyak esensial dengan formula khusus untuk bayi 0-6 bulan',
+                'ingredient_item' => 'Minyak Lavender, Minyak Chamomile, Minyak Kelapa Murni, Vitamin E',
+                'netweight_item' => '2 x 30ml',
+                'contain_item' => '2 botol minyak bayi dalam kemasan twin pack',
+                'costprice_item' => 120000,
+                'sell_price' => 159000,
+                'stock' => 15,
+                'unit_item' => 'set'
+            ],            
+            [
+                'category_id' => $categoryIds['Gentle Baby'],
+                'name_item' => 'Twin Pack Common Cold Relief',
+                'description_item' => 'Paket twin pack untuk meredakan batuk pilek berisi 2 minyak dengan formula anti flu dan pereda batuk',
+                'ingredient_item' => 'Minyak Eucalyptus, Minyak Tea Tree, Minyak Peppermint, Minyak Kelapa',
+                'netweight_item' => '2 x 30ml',
+                'contain_item' => '2 botol minyak bayi dalam kemasan twin pack',
+                'costprice_item' => 140000,
+                'sell_price' => 179000,
+                'stock' => 12,
+                'unit_item' => 'set'
+            ],
+            [
+                'category_id' => $categoryIds['Gentle Baby'],
+                'name_item' => 'Twin Pack Travel Essential',
+                'description_item' => 'Paket twin pack untuk traveling berisi 2 minyak portable dengan formula anti nyamuk dan penenang',
+                'ingredient_item' => 'Minyak Citronella, Minyak Lavender, Minyak Lemongrass, Minyak Kelapa',
+                'netweight_item' => '2 x 30ml',
+                'contain_item' => '2 botol minyak bayi dalam kemasan twin pack',
+                'costprice_item' => 110000,
+                'sell_price' => 149000,
+                'stock' => 20,
+                'unit_item' => 'set'
             ],
         ];
 
