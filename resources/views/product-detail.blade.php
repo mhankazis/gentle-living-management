@@ -581,39 +581,50 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($relatedProducts as $relatedProduct)
             <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group product-card">
+                <!-- Product Image with Enhanced Thumbnail -->
                 <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl overflow-hidden relative">
-                    @if($relatedProduct->image_url)
-                        <img src="{{ $relatedProduct->image_url }}" alt="{{ $relatedProduct->name_item }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                    @else
-                        <!-- Generate image based on product name pattern -->
-                        @php
-                            $productName = strtolower($relatedProduct->name_item);
-                            $imageCode = 'placeholder';
-                            
-                            if (str_contains($productName, 'deep sleep')) $imageCode = 'DS-100-ml';
-                            elseif (str_contains($productName, 'calming') || str_contains($productName, 'focus')) $imageCode = 'CNF-100-ml';
-                            elseif (str_contains($productName, 'joy') || str_contains($productName, 'happiness')) $imageCode = 'JOY-100-ml';
-                            elseif (str_contains($productName, 'immune') || str_contains($productName, 'booster')) $imageCode = 'IB-100-ml';
-                            elseif (str_contains($productName, 'baby')) $imageCode = 'BB-100-ml';
-                            elseif (str_contains($productName, 'good feeling')) $imageCode = 'GF-100-ml';
-                            elseif (str_contains($productName, 'massage your baby')) $imageCode = 'MYB-100-ml';
-                            elseif (str_contains($productName, 'love') || str_contains($productName, 'dream')) $imageCode = 'LDR-100-ml';
-                            elseif (str_contains($productName, 'total care')) $imageCode = 'TC-100-ml';
-                            
-                            $imagePath = $imageCode !== 'placeholder' ? "/images/{$imageCode}.jpg" : "/images/placeholder.jpg";
-                        @endphp
-                        <img src="{{ $imagePath }}" alt="{{ $relatedProduct->name_item }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                    @endif
+                    @php
+                        // Enhanced image generation logic for better matching
+                        $productName = strtolower($relatedProduct->name_item);
+                        $imageCode = 'placeholder';
+                        
+                        // More specific pattern matching
+                        if (str_contains($productName, 'deep sleep') || str_contains($productName, 'sleep')) {
+                            $imageCode = 'DS-100-ml';
+                        } elseif (str_contains($productName, 'bye bugs') || str_contains($productName, 'bug')) {
+                            $imageCode = 'BB-100-ml';
+                        } elseif (str_contains($productName, 'ldr booster') || str_contains($productName, 'ldr')) {
+                            $imageCode = 'LDR-100-ml';
+                        } elseif (str_contains($productName, 'tummy calm') || str_contains($productName, 'calm')) {
+                            $imageCode = 'TC-100-ml';
+                        } elseif (str_contains($productName, 'calming') || str_contains($productName, 'focus')) {
+                            $imageCode = 'CNF-100-ml';
+                        } elseif (str_contains($productName, 'joy') || str_contains($productName, 'happiness')) {
+                            $imageCode = 'JOY-100-ml';
+                        } elseif (str_contains($productName, 'immune') || str_contains($productName, 'booster')) {
+                            $imageCode = 'IB-100-ml';
+                        } elseif (str_contains($productName, 'baby') && !str_contains($productName, 'deep sleep')) {
+                            $imageCode = 'BB-100-ml';
+                        } elseif (str_contains($productName, 'good feeling')) {
+                            $imageCode = 'GF-100-ml';
+                        } elseif (str_contains($productName, 'massage your baby') || str_contains($productName, 'massage')) {
+                            $imageCode = 'MYB-100-ml';
+                        } elseif (str_contains($productName, 'love') || str_contains($productName, 'dream')) {
+                            $imageCode = 'LDR-100-ml';
+                        } elseif (str_contains($productName, 'total care')) {
+                            $imageCode = 'TC-100-ml';
+                        }
+                        
+                        $imagePath = $imageCode !== 'placeholder' ? "/images/{$imageCode}.jpg" : "/images/placeholder.jpg";
+                    @endphp
                     
-                    <!-- Quick View Button -->
-                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                        <a href="{{ route('product.detail', $relatedProduct->item_id) }}" 
-                           class="opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg font-medium text-gray-900 hover:bg-white transition-all duration-200">
-                            Lihat Detail
-                        </a>
-                    </div>
+                    <!-- Main Product Image -->
+                    <img src="{{ $imagePath }}" 
+                         alt="{{ $relatedProduct->name_item }}" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                         onerror="this.src='/images/placeholder.jpg'">
                     
-                    <!-- Stock Badge -->
+                    <!-- Stock Status Badge -->
                     @if($relatedProduct->stock <= 5 && $relatedProduct->stock > 0)
                     <div class="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
                         Stok Terbatas
@@ -622,29 +633,30 @@
                     <div class="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
                         Stok Banyak
                     </div>
+                    @elseif($relatedProduct->stock <= 0)
+                    <div class="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        Stok Habis
+                    </div>
                     @endif
+                    
+                    <!-- Quick View Button -->
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                        <a href="{{ route('product.detail', $relatedProduct->item_id) }}" 
+                           class="opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg font-medium text-gray-900 hover:bg-white transition-all duration-200 hover-lift">
+                            Lihat Detail
+                        </a>
+                    </div>
                 </div>
                 
+                <!-- Product Information -->
                 <div class="p-4 space-y-3">
+                    <!-- Category Badge -->
                     @if($relatedProduct->category)
-                    <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                        {{ $relatedProduct->category->category_name }}
-                    </span>
-                    @endif
-                    
-                    <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-                        {{ $relatedProduct->name_item }}
-                    </h3>
-                    
-                    <!-- Product Description -->
-                    @if($relatedProduct->description_item)
-                    <p class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($relatedProduct->description_item, 60) }}</p>
-                    @endif
-                    
                     <div class="flex items-center justify-between">
-                        <div class="text-xl font-bold text-blue-600">
-                            Rp {{ number_format($relatedProduct->sell_price, 0, ',', '.') }}
-                        </div>
+                        <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                            {{ $relatedProduct->category->category_name }}
+                        </span>
+                        <!-- Rating Stars -->
                         <div class="flex text-yellow-400">
                             @for($i = 1; $i <= 5; $i++)
                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -653,21 +665,57 @@
                             @endfor
                         </div>
                     </div>
+                    @endif
+                    
+                    <!-- Product Name -->
+                    <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 min-h-[2.5rem]">
+                        {{ $relatedProduct->name_item }}
+                    </h3>
+                    
+                    <!-- Product Description -->
+                    @if($relatedProduct->description_item)
+                    <p class="text-xs text-gray-500 line-clamp-2 min-h-[2rem]">
+                        {{ Str::limit($relatedProduct->description_item, 80) }}
+                    </p>
+                    @else
+                    <p class="text-xs text-gray-500 line-clamp-2 min-h-[2rem]">
+                        Minyak bayi premium untuk kesehatan dan kenyamanan si kecil
+                    </p>
+                    @endif
+                    
+                    <!-- Price -->
+                    <div class="flex items-center justify-between">
+                        <div class="text-lg font-bold text-blue-600">
+                            Rp {{ number_format($relatedProduct->sell_price, 0, ',', '.') }}
+                        </div>
+                    </div>
                     
                     <!-- Stock Info -->
-                    <div class="text-xs text-gray-500">
+                    <div class="text-xs">
                         Stok: <span class="font-medium {{ $relatedProduct->stock > 0 ? 'text-green-600' : 'text-red-600' }}">
                             {{ $relatedProduct->stock > 0 ? $relatedProduct->stock . ' tersedia' : 'Habis' }}
                         </span>
                     </div>
                     
+                    <!-- Action Button -->
                     <a href="{{ route('product.detail', $relatedProduct->item_id) }}" 
-                       class="block w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 text-center">
+                       class="block w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2.5 px-4 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 text-center text-sm hover-lift">
                         Lihat Produk
                     </a>
                 </div>
             </div>
             @endforeach
+        </div>
+        
+        <!-- View All Products Button -->
+        <div class="text-center mt-8">
+            <a href="{{ route('products.index') }}" 
+               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                <span>Lihat Semua Produk</span>
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+            </a>
         </div>
     </div>
     @endif
@@ -892,6 +940,7 @@ function productDetail() {
 </script>
 
 <style>
+/* Line clamp utilities */
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -899,6 +948,14 @@ function productDetail() {
     overflow: hidden;
 }
 
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Variant thumbnail styles */
 .variant-thumbnail {
     transition: all 0.2s ease-in-out;
 }
@@ -913,15 +970,149 @@ function productDetail() {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
+/* Enhanced product card styles */
 .product-card {
     transition: all 0.3s ease-in-out;
+    border: 1px solid rgba(229, 231, 235, 0.5);
 }
 
 .product-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    border-color: rgba(59, 130, 246, 0.3);
 }
 
+.product-card .aspect-square {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card img {
+    transition: transform 0.4s ease;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.product-card:hover img {
+    transform: scale(1.1);
+}
+
+/* Enhanced badge styles */
+.stock-badge {
+    backdrop-filter: blur(10px);
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced button styles */
+.product-card .btn-product {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.product-card .btn-product:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.product-card:hover .btn-product:before {
+    left: 100%;
+}
+
+.product-card .btn-product:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+/* Quick view overlay enhancement */
+.quick-view-overlay {
+    background: linear-gradient(
+        45deg,
+        rgba(59, 130, 246, 0.1) 0%,
+        rgba(139, 92, 246, 0.1) 100%
+    );
+    backdrop-filter: blur(8px);
+}
+
+/* Category badge enhancement */
+.category-badge {
+    background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: #1e40af;
+    font-weight: 600;
+}
+
+/* Rating stars enhancement */
+.rating-stars svg {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    transition: transform 0.2s ease;
+}
+
+.product-card:hover .rating-stars svg {
+    transform: scale(1.1);
+}
+
+/* Price text enhancement */
+.price-text {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+/* Stock info enhancement */
+.stock-info {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(243, 244, 246, 0.8);
+    border: 1px solid rgba(209, 213, 219, 0.5);
+}
+
+/* Card content spacing */
+.product-card .p-4 {
+    padding: 1.25rem;
+}
+
+.product-card .space-y-3 > * + * {
+    margin-top: 0.875rem;
+}
+
+/* Enhanced minimum heights for consistency */
+.min-h-2-5 {
+    min-height: 2.5rem;
+}
+
+.min-h-2 {
+    min-height: 2rem;
+}
+
+/* Grid enhancements */
+@media (min-width: 640px) {
+    .grid-enhanced {
+        gap: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-enhanced {
+        gap: 2rem;
+    }
+}
+
+/* Therapeutic gradient */
 .therapeutic-gradient {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }

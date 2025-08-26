@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('master_users', function (Blueprint $table) {
-            if (!Schema::hasColumn('master_users', 'role')) {
+        // Check if the table exists and if the role column doesn't already exist
+        if (Schema::hasTable('master_users') && !Schema::hasColumn('master_users', 'role')) {
+            Schema::table('master_users', function (Blueprint $table) {
                 $table->enum('role', ['user', 'admin', 'super_admin'])->default('user')->after('phone');
-            }
-        });
+            });
+        }
     }
 
     /**
