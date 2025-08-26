@@ -1,13 +1,45 @@
 <!-- Categories Section ala Shop by Category -->
 @php
-$categories = [
-  [ 'name' => 'Perawatan Bayi', 'icon' => 'baby', 'color' => 'from-emerald-500 to-teal-500', 'count' => '25+' ],
-  [ 'name' => 'Minyak Alami', 'icon' => 'oil', 'color' => 'from-blue-500 to-indigo-500', 'count' => '15+' ],
-  [ 'name' => 'Produk Anak', 'icon' => 'child', 'color' => 'from-purple-500 to-violet-500', 'count' => '30+' ],
-  [ 'name' => 'Aromaterapi', 'icon' => 'flower', 'color' => 'from-pink-500 to-rose-500', 'count' => '20+' ],
-  [ 'name' => 'Kesehatan', 'icon' => 'heart', 'color' => 'from-orange-500 to-red-500', 'count' => '18+' ],
-  [ 'name' => 'Bundle Hemat', 'icon' => 'gift', 'color' => 'from-teal-500 to-cyan-500', 'count' => '12+' ],
+// Get dynamic categories from database
+$dbCategories = \App\Models\MasterCategory::withCount('items')->get();
+
+// Map database categories to display format
+$categories = [];
+$colorClasses = [
+  'from-emerald-500 to-teal-500',
+  'from-blue-500 to-indigo-500', 
+  'from-purple-500 to-violet-500',
+  'from-pink-500 to-rose-500',
+  'from-orange-500 to-red-500',
+  'from-teal-500 to-cyan-500',
+  'from-amber-500 to-yellow-500',
+  'from-green-500 to-emerald-500'
 ];
+
+$iconMap = [
+  'Minyak Bayi' => 'baby',
+  'Aromaterapi' => 'flower', 
+  'Kesehatan' => 'heart',
+  'Perawatan Kulit' => 'oil',
+  'Essential Oil' => 'oil',
+  'Perawatan Bayi' => 'baby',
+  'Minyak Alami' => 'oil',
+  'Produk Anak' => 'child',
+  'Bundle Hemat' => 'gift'
+];
+
+foreach ($dbCategories as $index => $category) {
+  $icon = $iconMap[$category->category_name] ?? 'heart';
+  $color = $colorClasses[$index % count($colorClasses)];
+  $categories[] = [
+    'id' => $category->category_id,
+    'name' => $category->category_name,
+    'icon' => $icon,
+    'color' => $color,
+    'count' => $category->items_count
+  ];
+}
+
 $icons = [
   'baby' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M8 14s2-2 4-2 4 2 4 2v6H8v-6z"/></svg>',
   'oil' => '<svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20m-8-8a8 8 0 1 1 16 0"/></svg>',
@@ -27,7 +59,7 @@ $icons = [
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
       @foreach ($categories as $category)
-        <div class="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white/95 backdrop-blur-sm hover:scale-105 rounded-2xl shadow-lg">
+        <a href="{{ route('products.category', $category['id']) }}" class="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white/95 backdrop-blur-sm hover:scale-105 rounded-2xl shadow-lg block">
           <div class="p-6 text-center">
             <div class="w-16 h-16 bg-gradient-to-r {{ $category['color'] }} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:rotate-6 transition-transform duration-300 shadow-md">
               {!! $icons[$category['icon']] !!}
@@ -35,13 +67,13 @@ $icons = [
             <h3 class="font-semibold text-gray-900 mb-1">{{ $category['name'] }}</h3>
             <p class="text-sm text-gray-600">{{ $category['count'] }} produk</p>
           </div>
-        </div>
+        </a>
       @endforeach
     </div>
     <div class="text-center mt-12">
-      <button class="border-2 border-white/30 px-8 py-3 text-lg font-semibold rounded-lg bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-300">
+      <a href="{{ route('products.index') }}" class="border-2 border-white/30 px-8 py-3 text-lg font-semibold rounded-lg bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-300 inline-block">
         Lihat Semua Kategori
-      </button>
+      </a>
     </div>
   </div>
 </section>

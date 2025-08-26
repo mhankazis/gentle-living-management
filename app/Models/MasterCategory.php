@@ -10,7 +10,8 @@ class MasterCategory extends Model
     protected $primaryKey = 'category_id';
     
     protected $fillable = [
-        'name_category'
+        'category_name',
+        'description'
     ];
     
     // Relationship with items
